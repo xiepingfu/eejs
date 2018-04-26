@@ -1,0 +1,116 @@
+<% include header %>  
+
+    <div class="ui main container">
+
+        <div class="padding">
+            <h1>注册</h1>
+            <div class="ui error message" id="error" data-am-alert hidden>
+                <p id="error_info">??</p>
+            </div>
+            <form class="ui form">
+                <div class="field">
+                    <label for="username">用户名</label>
+                    <input type="text" placeholder="" id="username">
+                </div>
+                <div class="field">
+                    <label for="nick">昵称</label>
+                    <input type="text" placeholder="" id="nick">
+                </div>
+                <div class="two fields">
+                    <div class="field">
+                        <label class="ui header">密码</label>
+                        <input type="password" placeholder="" id="password1">
+                    </div>
+                    <div class="field">
+                        <label class="ui header">确认密码</label>
+                        <input type="password" placeholder="" id="password2">
+                    </div>
+                </div>
+                <a id="sign_up" class="ui button" href="javascript:submit();">注册</a>
+            </form>
+        </div>
+        <script type="text/javascript">
+            function show_error(error) {
+                $("#error_info").text(error);
+                $("#error").show();
+            }
+
+            function success() {
+                window.location.href = "/index";
+            }
+
+            function mail_required() {
+                alert("注册确认邮件已经发送到您的邮箱的垃圾箱，点击邮件内的链接即可完成注册。");
+                var s = $("#email").val();
+                var mailWebsite = 'https://mail.' + s.substring(s.indexOf('@') + 1, s.length);
+                if (mailWebsite === 'https://mail.gmail.com') mailWebsite = 'https://mail.google.com';
+                window.location.href = mailWebsite;
+            }
+
+            function submit() {
+                if (!((/^[a-zA-Z0-9\-\_]+$/).test($("#username").val()))) {
+                    show_error("用户名需要大于 3 个字符小于 16 个字符，仅允许字母数字和下划线");
+                    return;
+                }
+                /*
+                if(!((/^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/).test($("#email").val()))) 
+                {
+                    show_error("请输入正确的邮箱");
+                    return;
+                }
+                */
+                if ($("#password1").val() != $("#password2").val()) {
+                    show_error("两次输入的密码不一致");
+                    return;
+                }
+                password = md5($("#password1").val())
+                $("#sign_up").addClass("loading");
+                $.ajax({
+                    url: '/api/register',
+                    type: 'POST',
+                    async: true,
+                    data: {
+                        username: $("#username").val(),
+                        password: password,
+                        nick: $("#nick").val(),
+                        prevUrl: "/",
+                        _csrf: document.head.getAttribute('data-csrf-token')
+                    },
+                    success: function (data) {
+                        error_code = data.error_code;
+                        switch (error_code) {
+                            case 2001:
+                                show_error("服务器未收到数据");
+                                break;
+                            case 2008:
+                                show_error("已经有人用过这个用户名了");
+                                break;
+                            case 2009:
+                                show_error("邮箱地址已被占用");
+                                break;
+                            case 2010:
+                                show_error("验证邮件发送失败：\n" + data.message);
+                                break;
+                            case 0:
+                                success();
+                                break;
+                            case 2:
+                                mail_required();
+                                break;
+                            default:
+                                show_error("未知错误：" + JSON.stringify(data));
+                                break;
+                        }
+                        $("#sign_up").removeClass("loading");
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert(XMLHttpRequest.responseText);
+                        show_error("未知错误");
+                        $("#sign_up").removeClass("loading");
+                    }
+                });
+            }
+        </script>
+    </div>
+
+<% include footer %>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title><%=title%></title>
+
+    <link rel="stylesheet" type="text/css" href="/semantic/dist/semantic.min.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js" integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8="
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <div class="ui fixed secondary pointing menu" style="position: fixed; height: 48px;">
+        <div class="ui container">
+            <span class="item">HNISTOJ</span>
+            <a class="item <% if (menuActive == 'index') { %> active<% } %>" id="index" href="/index">
+                <i class="home icon"></i> 首页</a>
+            <a class="item <% if (menuActive == 'problems') { %> active<% } %>" id="problems" href="/problems">
+                <i class="list icon"></i> 题库</a>
+            <a class="item <% if (menuActive == 'contests') { %> active<% } %>" id="contests" href="/contests">
+                <i class="trophy icon"></i> 比赛</a>
+            <a class="item <% if (menuActive == 'submissions') { %> active<% } %>" id="submissions" href="/submissions">
+                <i class="tasks icon"></i> 评测</a>
+            <a class="item <% if (menuActive == 'ranklist') { %> active<% } %>" id="ranklist" href="/ranklist">
+                <i class="signal icon"></i> 排名</a>
+            <a class="item <% if (menuActive == 'discussion') { %> active<% } %>" id="topic" href="/discussion">
+                <i class="comments icon"></i> 讨论</a>
+            <a class="item <% if (menuActive == 'help') { %> active<% } %>" id="help" href="/help">
+                <i class="help circle icon"></i> 帮助</a>
+            <%if(privilege==255){%>
+                <div class="ui pointing dropdown link item">
+                    <i class="cogs icon"></i>
+                    <span class="text">管理</span>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a class="item" href="/admin/notice">公告管理</a>
+                        <a class="item" href="/admin/problem">问题管理</a>
+                        <a class="item" href="/admin/contest">竞赛管理</a>
+                        <a class="item" href="/admin/user">用户管理</a>
+                        <a class="item" href="">Cancellations</a>
+                    </div>
+                </div>
+            <%}%>
+            <div class="right menu">
+                <% if(loginuser == '') {%>
+                <div class="item">
+                    <a class="ui button" style="margin-right: 0.5em; " href="/login"> 登录 </a>
+                    <a class="ui primary button" href="/register"> 注册 </a>
+                </div>
+                <%}%>
+                <% if(loginuser != '') {%>
+                <div class="ui inline dropdown item">
+                    <div class="text"><%=loginuser%></div>
+                    <i class="dropdown icon"></i>
+                    <div class="menu">
+                        <a class="item" href="/user/<%=loginuser%>">
+                            <i class="user circle icon"></i> 个人中心</a>
+                        <a class="item" href="/user/<%=loginuser%>/edit">
+                            <i class="edit circle icon"></i> 修改资料</a>
+                        <div class="divider"></div>
+                        <div class="item" id="loginout">
+                            <i class="power circle icon"></i> 退出登录</div>
+                    </div>
+                </div>
+                <%}%>
+            </div>
+        </div>
+    </div>
+    <div style="height: 70px;"></div>

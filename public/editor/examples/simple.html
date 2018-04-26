@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Simple example - Editor.md examples</title>
+    <link rel="stylesheet" href="css/style.css" />
+    <link rel="stylesheet" href="../css/editormd.css" />
+    <link rel="shortcut icon" href="https://pandao.github.io/editor.md/favicon.ico" type="image/x-icon" />
+</head>
+
+<body>
+    <div id="layout">
+        <header>
+            <h1>Simple example</h1>
+        </header>
+        <form action="javascript:submit();">
+            <div id="test-editormd">
+                <textarea style="display:none;" id="text"></textarea>
+            </div>
+            <input type="submit" value="submit">
+        </form>
+    </div>
+    <script src="js/jquery.min.js"></script>
+    <script src="../editormd.min.js"></script>
+    <script>
+        function submit() {
+            alert(testEditor.getHTML());
+            testEditor.getMarkdown();       // 获取 Markdown 源码
+            testEditor.getHTML();           // 获取 Textarea 保存的 HTML 源码
+            testEditor.getPreviewedHTML();  // 获取预览窗口里的 HTML，在开启 watch 且没有开启 saveHTMLToTextarea 时使用
+        }
+    </script>
+    <script type="text/javascript">
+        var testEditor;
+        $(function () {
+            testEditor = editormd("test-editormd", {
+                width: "90%",
+                height: 640,
+                syncScrolling: "single",
+                path: "../lib/",
+                saveHTMLToTextarea: true
+            });
+        });
+    </script>
+</body>
+
+</html>

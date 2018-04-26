@@ -1,0 +1,63 @@
+ <% include header %>   
+    
+    <div class="ui main container ">
+            <div class="padding">
+                <table class="ui very basic center aligned selectable table">
+                    <thead>
+                        <tr>
+                            <th>比赛名称</th>
+                            <th>开始时间</th>
+                            <th>结束时间</th>
+                            <th>描述</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    <%contests.forEach(function(item){%>
+                        <tr>
+                            <td class="left aligned">
+                                <a href="/contests/<%=item.contest_id%>"><%=item.title%>
+                                    <% if(item.statu == 1) {%>
+                                            <span class="ui header">
+                                                <div class="ui mini grey label">已结束</div>
+                                            </span>
+                                        <%  }%>
+                                        <% if(item.statu == 2) {%>
+                                            <span class="ui header">
+                                                <div class="ui mini green label">进行中</div>
+                                            </span>
+                                        <%  }%>
+                                        <% if(item.statu == 3) {%>
+                                            <span class="ui header">
+                                                <div class="ui mini blue label">未开始</div>
+                                            </span>
+                                        <%  }%>
+                                </a>
+                            </td>
+                            <td><%=item.start_time%></td>
+                            <td><%=item.end_time%></td>
+                            <td class="font-content">
+                                <div style="position: relative; overflow: hidden; ">
+                                    <p><%=item.description%>管理员很懒，什么也没写！</p>
+                                </div>
+                            </td>
+                        </tr>
+                        <%});%>
+            </tbody>
+            </table>
+            <br>
+            <div style="text-align: center; ">
+                <div class="ui pagination menu" style="box-shadow: none; ">
+                    <a class="<%if(parseInt(page)<=1){%>disabled<%}%> icon item" id="page_prev">
+                        <i class="left chevron icon"></i>
+                    </a>
+                    <%for(var i=1; i<=pages; i++){%>
+                        <a class="<%if(parseInt(page)==i){%>active<%}%> item" href="/contests?page=<%=i%>"><%=i%></a>
+                    <%}%>
+                    <a class="<%if(parseInt(page)>=parseInt(pages)){%>disabled<%}%> icon item" href="/contests?page=<%=parseInt(page)+1%>" id="page_next">
+                        <i class="right chevron icon"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+        </div>
+        <% include footer %>

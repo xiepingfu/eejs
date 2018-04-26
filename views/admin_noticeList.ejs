@@ -1,0 +1,159 @@
+<% include header %>
+
+    <div class="ui main container">
+        <div class="padding">
+            <div class="ui grid" style="margin-bottom: 10px; ">
+                <div class="row" style="white-space: nowrap; ">
+                    <div class="seven wide column">
+
+                        <form action="/problems/search" method="get">
+                            <div class="ui search" style="width: 280px; height: 28px; margin-top: -5.3px; ">
+                                <div class="ui left icon input" style="width: 100%; ">
+                                    <input class="prompt" style="width: 100%; " type="text" placeholder="标题 …" name="keyword">
+                                    <i class="search icon"></i>
+                                </div>
+                                <div class="results" style="width: 100%; "></div>
+                            </div>
+                        </form>
+
+                    </div>
+                    <div class="nine wide right aligned column">
+                        <div style="margin-left: 10px;margin-right: 10px; display: inline-block; ">
+                            <div style="text-align: center; ">
+                                <div class="ui pagination menu" style="box-shadow: none; ">
+                                    <a class=" <%if(parseInt(page)<=1){%>disabled<%}%> icon item" id="page_prev" href="/admin/notice?page=<%=parseInt(page)-1%>">
+                                        <i class="left chevron icon"></i>
+                                    </a>
+                                    <%
+                                    var ileft=0;
+                                    var iright=0;
+                                    %>
+                                    <%for(var i=1; i<=pages; i++){%>
+                                        <%if(pages>=8){%>
+                                            <% if(Math.abs(i-page)<=2 || Math.abs(pages-i)<=1 || Math.abs(i)<=1){ %>
+                                                <a class="item <%if(i==page){%>active<%}%>" href="/admin/notice?page=<%=i%>"><%=i%></a>
+                                            <%}else{ %>
+                                                <%if(ileft==0){%>
+                                                    <%ileft=1%>
+                                                    <a class="item disabled" href="">....</a>
+                                                <%}else if(iright==0){%>
+                                                    <%iright=1%>
+                                                    <a class="item disabled" href="">....</a>
+                                                <%}%>
+                                            <%}%>
+                                        <%}else{%>
+                                                <a class="item <%if(i==page){%>active<%}%>" href="/admin/notice?page=<%=i%>"><%=i%></a>
+                                        <%}%>
+                                    <%}%>
+                                    <a class="<%if(parseInt(page)>=parseInt(pages)){%>disabled<%}%> icon item" href="/admin/notice?page=<%=parseInt(page)+1%>" id="page_next">
+                                        <i class="right chevron icon"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <a href="/admin/noticeAdd"><button class="ui primary button">添加公告</button></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <table class="ui very white center aligned table selectable">
+            <thead>
+                <tr>
+                    <th class="one wide">
+                        <a href="/problems?sort=id&order=desc">编号
+                            <i class="angle up icon"></i>
+                        </a>
+                    </th>
+                    <th class="two wide">
+                        <a href="/problems?sort=title&order=asc">标题</a>
+                    </th>
+                    <th class="two wide">
+                        <a href="/problems?sort=ac_num&order=desc">时间</a>
+                    </th>
+                    <th class="one wide">置顶
+                    </th>
+                    <th class="one wide">公开
+                    </th>
+                    <th class="one wide">删除
+                    </th>
+                    <th class="one wide">编辑
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            <script>
+                function submit(news_id){
+                    alert($("#isTop"+news_id).is(":checked"));
+                }
+            </script>
+
+            <%news.forEach(function(item){%>
+            <form method="POST">
+                <tr style="height: 44px; ">
+                    <td><%=item.news_id%>
+                    </td>
+                    <td><a href="/notice/<%=item.news_id%>"><%=item.title%></a></td>
+                    <td>
+                        <%=item.time%>
+                    </td>
+                    <td>
+                            <div class="ui toggle checkbox" onclick="javascript:top_news('<%=item.news_id%>')">
+                                <input type="checkbox" name="public" id='isTop<%=item.news_id%>' <%if(item.importance!=0){%>checked<%}%>>
+                            </div>
+                    </td>
+                    <td>
+                        <div class="ui toggle checkbox" onclick="javascript:public_news('<%=item.news_id%>')">
+                            <input type="checkbox" name="public" id='isPublic<%=item.news_id%>' <%if(item.defunct=='N'){%>checked<%}%>>
+                            </div>
+                        </td>
+                    <td>
+                        <a class="ui red button" href="javascript:delete_confirm('<%=item.news_id%>');">删除
+                        </a>
+                    </td>
+                    <td>
+                        <a class="ui green button" href="/admin/noticeEdit/<%=item.news_id%>">编辑
+                        </a>
+                    </td>
+                </tr>
+                </form>
+                <%});%>
+            </tbody>
+        </table>
+        <br>
+
+        <div style="text-align: center; ">
+            <div class="ui pagination menu" style="box-shadow: none; ">
+                <a class=" <%if(parseInt(page)<=1){%>disabled<%}%> icon item" id="page_prev" href="/admin/notice?page=<%=parseInt(page)-1%>">
+                    <i class="left chevron icon"></i>
+                </a>
+                <%
+                var ileft=0;
+                var iright=0;
+                %>
+                <%for(var i=1; i<=pages; i++){%>
+                    <%if(pages>=18){%>
+                        <% if(Math.abs(i-page)<=4 || Math.abs(pages-i)<=4 || Math.abs(i)<=4){ %>
+                            <a class="item <%if(i==page){%>active<%}%>" href="/admin/notice?page=<%=i%>"><%=i%></a>
+                        <%}else{ %>
+                            <%if(ileft==0){%>
+                                <%ileft=1%>
+                                <a class="item disabled" href="">....</a>
+                            <%}else if(iright==0){%>
+                                <%iright=1%>
+                                <a class="item disabled" href="">....</a>
+                            <%}%>
+                        <%}%>
+                    <%}else{%>
+                            <a class="item <%if(i==page){%>active<%}%>" href="/admin/notice?page=<%=i%>"><%=i%></a>
+                    <%}%>
+                <%}%>
+                <a class="<%if(parseInt(page)>=parseInt(pages)){%>disabled<%}%> icon item" href="/admin/notice?page=<%=parseInt(page)+1%>" id="page_next">
+                    <i class="right chevron icon"></i>
+                </a>
+            </div>
+        </div>        
+    <script src="/javascripts/admin_noticeList.js"></script>
+    </div>
+<% include footer %>

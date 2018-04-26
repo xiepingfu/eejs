@@ -1,0 +1,81 @@
+<% include header %>
+  <div class="ui main container">
+        <div class="padding">
+            <form action="/ranklist/query" class="ui mini form" method="get" role="form" style="margin-bottom: 25px; text-align: right; ">
+                <div class="ui action left icon input inline" style="width: 180px; margin-right: 77px; ">
+                    <i class="search icon"></i>
+                    <input name="uid" placeholder="用户名" type="text">
+                    <button class="ui mini button" type="submit">查找用户</button>
+                </div>
+            </form>
+            <table class="ui very center aligned table white selectable" style="table-layout: fixed; ">
+                <thead>
+                    <tr>
+                        <th style="width: 60px; ">#</th>
+                        <th style="width: 150px; ">
+                            <a href="/ranklist?sort=username&order=asc">用户名</a>
+                        </th>
+                        <th>昵称</th>
+                        <th style="width: 100px; ">
+                            <a href="/ranklist?sort=ac_num&order=desc">通过数量</a>
+                        </th>
+                        <th style="width: 100px; ">
+                            <a href="/ranklist?sort=rating&order=asc">通过率<i class="angle down icon"></i>
+                            </a>
+                        </th>
+                    </tr>
+                </thead>
+                <script>          var lineHeight = 0; (function () { var div = document.createElement('div'); div.style.position = 'fixed'; div.style.left = -10000; div.style.visibility = 'hidden'; div.innerText = '测试，Test.'; document.body.appendChild(div); lineHeight = div.clientHeight; })();          </script>
+                <tbody>
+                <%var rank=1+(page-1)*50%>
+                <%ranklist.forEach(function(item){%>
+                    <tr>
+                        <td><%=rank%></td>
+                        <td>
+                            <a href="/user/<%=item.user_id%>"><%=item.user_id%></a>
+                        </td>
+                        <td class="font-content">
+                            <%=item.nick%>
+                        </td>
+                        <td><%=item.solved%></td>
+                        <td><%=((100*item.solved/(0.0001+item.submit)).toFixed(1))%>%</td>
+                    </tr>
+                    <%rank=rank+1;%>
+                <% })%>
+                </tbody>
+            </table>
+            <br>
+            <div style="text-align: center; ">
+                <div class="ui pagination menu" style="box-shadow: none; ">
+                    <a class=" <%if(parseInt(page)==1){%>disabled<%}%> icon item" id="page_prev">
+                        <i class="left chevron icon"></i>
+                        </a>
+                        <%
+                        var ileft=0;
+                        var iright=0;
+                        %>
+                        <%for(var i=1; i<=parseInt(pages); i++){%>
+                        <%if(pages>=18){%>
+                            <% if(Math.abs(i-page)<=4 || Math.abs(pages-i)<=4 || Math.abs(i)<=4){ %>
+                            <a class="<%if(parseInt(page)==i){%>active<%}%> item" href="/ranklist?page=<%=i%>"><%=i%></a>
+                            <%}else{ %>
+                            <%if(parseInt(i)<page && ileft==0){%>
+                                <%ileft=1%>
+                                <a class="item disabled" href="">....</a>
+                            <%}else if(parseInt(i)>page && iright==0){%>
+                                <%iright=1%>
+                                <a class="item disabled" href="">....</a>
+                            <%}%>
+                        <%}%>
+                        <%}else{%>
+                            <a class="<%if(parseInt(page)==i){%>active<%}%> item" href="/ranklist?page=<%=i%>"><%=i%></a>
+                        <%}%>
+                        <%}%>
+                        <a class="<%if(parseInt(pages)==page){%>disabled<%}%> icon item" href="/ranklist?page=2" id="page_next">
+                        <i class="right chevron icon"></i>
+                        </a>
+                </div>
+            </div>
+        </div>
+    </div>
+<% include footer %>

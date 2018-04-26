@@ -1,0 +1,122 @@
+<% include header %>
+<div class="ui main container">
+    <div class="ui main container">
+        <div class="padding">
+            <div class="ui three column grid">
+                <div class="eleven wide column">
+                    <% news.forEach(function(item){%>
+                        <%if(item.defunct=='N' && item.importance=='1'){%>
+                            <div class="ui top attached block header">
+                            <span><%=item.title%></span>  
+                            <span style="float:right;"><%=item.time%></span>
+                            </div>
+            
+                            <div class="ui bottom attached segment">
+                            <%-item.content%>
+                            </div>
+                        <%}%>
+                    <% }) %>
+                        <h4 class="ui top attached block header">往期公告</h4>
+                    <div class="ui bottom attached segment">
+                            <table class="ui very basic table selectable">
+                                    <thead>
+                                      <tr>
+                                        <th>标题</th>
+                                        <th>时间</th>
+                                      </tr>
+                                    </thead>
+                                    <tbody>
+                            <% news.forEach(function(item){%>
+                        <%if(item.defunct=='N' && item.importance=='0'){%>
+                                <tr>
+                                    <td><a href="/notice/<%=item.news_id%>"><%=item.title%></a></td>
+                                    <td><%-item.time%></td>
+                                </tr>
+                        <%}%>
+                            <% }) %>
+                                    </tbody>
+                                  </table>
+                    </div>
+                </div>
+                <div class="right floated five wide column">
+                    <h4 class="ui top attached block header">搜索题目</h4>
+                    <div class="ui bottom attached segment">
+                        <form action="/problems/search" method="get">
+                            <div class="ui search" style="width: 100%; ">
+                                <div class="ui left icon input" style="width: 100%; ">
+                                    <input class="prompt" style="width: 100%; " type="text" placeholder="ID / 题目名 …" name="keyword">
+                                    <i class="search icon"></i>
+                                </div>
+                                <div class="results" style="width: 100%; "></div>
+                            </div>
+                        </form>
+                    </div>
+                    <h4 class="ui top attached block header">近期比赛</h4>
+                    <div class="ui bottom attached segment">
+                        <table class="ui very basic center aligned table">
+                            <thead>
+                                <tr>
+                                    <th>比赛名称</th>
+                                    <th>开始时间</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <% contests.forEach(function(item){%>
+                                <tr>
+                                    <td>
+                                        <a href="/contests/<%=item.contest_id%>"><%=item.title%>
+                                        <% if(item.statu == 1) {%>
+                                            <span class="ui header">
+                                                <div class="ui mini grey label">已结束</div>
+                                            </span>
+                                        <%  }%>
+                                        <% if(item.statu == 2) {%>
+                                            <span class="ui header">
+                                                <div class="ui mini green label">进行中</div>
+                                            </span>
+                                        <%  }%>
+                                        <% if(item.statu == 3) {%>
+                                            <span class="ui header">
+                                                <div class="ui mini blue label">未开始</div>
+                                            </span>
+                                        <%  }%>
+                                        </a>
+                                    </td>
+                                    <td><%=item.start_time%><td>
+                                </tr>
+                            <% }) %>
+                            </tbody>
+                        </table>
+                    </div>
+                    <h4 class="ui top attached block header">排名</h4>
+                    <div class="ui bottom attached segment">
+                        <table class="ui very basic center aligned table" style="table-layout: fixed; ">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px; ">#</th>
+                                    <th style="width: 170px; ">昵称</th>
+                                    <th>解题数</th>
+                                </tr>
+                            </thead>
+                            <script> var lineHeight = 0; (function () { var div = document.createElement('div'); div.style.position = 'fixed'; div.style.left = -10000; div.style.visibility = 'hidden'; div.innerText = '测试，Test.'; document.body.appendChild(div); lineHeight = div.clientHeight; })();                                </script>
+                            <tbody>
+                            <% var rank = 1 %>
+                            <% ranklist.forEach(function(user){%>
+                                <tr>
+                                    <td><%=rank%></td>
+                                    <td><%=user.nick%></td>
+                                    <td><%=user.solved%></td>
+                                </tr>
+                                <% rank = rank+1 %>
+                            <% }) %>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        </div>
+</div>
+
+<% include footer %>

@@ -1,0 +1,167 @@
+<% include header %>
+    <div class="ui main container">
+        <div class="padding">
+            <div class="ui grid" style="margin-bottom: 10px; ">
+                <div class="row" style="white-space: nowrap; ">
+                    <div class="seven wide column">
+
+                        <form action="/problems/search" method="get">
+                            <div class="ui search" style="width: 280px; height: 28px; margin-top: -5.3px; ">
+                                <div class="ui left icon input" style="width: 100%; ">
+                                    <input class="prompt" style="width: 100%; " type="text" placeholder="ID / 题目名 …" name="keyword">
+                                    <i class="search icon"></i>
+                                </div>
+                                <div class="results" style="width: 100%; "></div>
+                            </div>
+                        </form>
+                    </div>
+                    <script>
+                    function show_tag(){
+                        var traget=document.getElementsByClassName('problems_tag');
+                        var tt=document.getElementById('problems_tag');
+                        if(tt.style.display=="")
+                            {tt.style.display="";}else{
+                        tt.style.display="none";}
+                        for (var i = 0; i < traget.length; i++) {
+                            if (traget[i].style.display == "") {
+                                traget[i].style.display = "none";
+                                //alert(traget[i].style.display+'1');
+                            } else {
+                                traget[i].style.display = "";
+                                //alert(traget[i].style.display+'2');
+                            }
+                        }
+                    };
+                    </script>
+                    <div class="nine wide right aligned column">
+                        <div class="ui toggle checkbox" id="show_tag" onclick="show_tag()">
+                            <input type="checkbox" name="public">
+                            <label>显示标签</label>
+                        </div>
+                        <div style="margin-left: 10px; display: inline-block; ">
+                            <div style="text-align: center; ">
+                                <div class="ui pagination menu" style="box-shadow: none; ">
+                                    <a class=" <%if(parseInt(page)<=1){%>disabled<%}%> icon item" id="page_prev" href="/problems?page=<%=parseInt(page)-1%>">
+                                        <i class="left chevron icon"></i>
+                                    </a>
+                                    <%
+                                    var ileft=0;
+                                    var iright=0;
+                                    %>
+                                    <%for(var i=1; i<=pages; i++){%>
+                                        <%if(pages>=8){%>
+                                            <% if(Math.abs(i-page)<=2 || Math.abs(pages-i)<=1 || Math.abs(i)<=1){ %>
+                                                <a class="item <%if(i==page){%>active<%}%>" href="/problems?page=<%=i%>"><%=i%></a>
+                                            <%}else{ %>
+                                                <%if(ileft==0){%>
+                                                    <%ileft=1%>
+                                                    <a class="item disabled" href="">....</a>
+                                                <%}else if(iright==0){%>
+                                                    <%iright=1%>
+                                                    <a class="item disabled" href="">....</a>
+                                                <%}%>
+                                            <%}%>
+                                        <%}else{%>
+                                                <a class="item <%if(i==page){%>active<%}%>" href="/problems?page=<%=i%>"><%=i%></a>
+                                        <%}%>
+                                    <%}%>
+                                    <a class="<%if(parseInt(page)>=parseInt(pages)){%>disabled<%}%> icon item" href="/problems?page=<%=parseInt(page)+1%>" id="page_next">
+                                        <i class="right chevron icon"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table class="ui very basic center aligned table selectable">
+            <thead>
+                <tr>
+                <% if(loginuser == '><') {%>
+                    <th class="one wide">提交状态</th>
+                <%}%>
+                    <th class="one wide">
+                        <a href="/problems?sort=id&order=desc">编号<i class="angle up icon"></i>
+                        </a>
+                    </th>
+                    <th class="left aligned">
+                        <a href="/problems?sort=title&order=asc">题目名称</a>
+                    </th>
+                    <th class="one wide">
+                        <a href="/problems?sort=ac_num&order=desc">通过</a>
+                    </th>
+                    <th class="one wide">
+                        <a href="/problems?sort=submit_num&order=desc">提交</a>
+                    </th>
+                    <th class="one wide">
+                        <a href="/problems?sort=ac_rate&order=desc">通过率</a>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            <% problems.forEach(function(item){ %>
+                <tr style="height: 44px; ">
+                <% if(loginuser == '><') {%>
+                    <td>
+                    </td>
+                <%}%>
+                    <td><%=item.problem_id%></td>
+                    <td class="left aligned">
+                        <a style="vertical-align: middle; " href="/problems/<%=item.problem_id%>"><%=item.title%>
+                        </a>
+                        <div class="show_tag_controled problems_tag" style="float: right;display:none;" id="problems_tag">
+                            <span class="ui header">
+                                <a href="" class="ui tiny black label">
+                                    <%=item.source%>
+                                </a>
+                            </span>
+                        </div>
+                    </td>
+                    <td><%=item.accepted%></td>
+                    <td><%=item.submit%></td>
+                    <td><%=((100*item.accepted/item.submit).toFixed(1))%>%</td>
+                </tr>
+            <%});%>
+            </tbody>
+        </table>
+        <br>
+        <div style="text-align: center; ">
+            <div class="ui pagination menu" style="box-shadow: none; ">
+                <a class=" <%if(parseInt(page)<=1){%>disabled<%}%> icon item" href="/problems?page=<%=parseInt(page)-1%>" id="page_prev">
+                    <i class="left chevron icon"></i>
+                </a>
+                <%for(var i=1; i<=pages; i++){%>
+                    <a class="item <%if(i==page){%>active<%}%>" href="/problems?page=<%=i%>"><%=i%></a>
+                <%}%>
+                <a class="<%if(parseInt(page)>=parseInt(pages)){%>disabled<%}%> icon item" href="/problems?page=<%=parseInt(page)+1%>" id="page_next">
+                    <i class="right chevron icon"></i>
+                </a>
+            </div>
+        </div>
+        <script>
+            document.addEventListener('keydown', function (event) {
+                if (event.keyCode === 39) document.getElementById('page_next').click();
+                else if (event.keyCode === 37) document.getElementById('page_prev').click();
+            });
+
+            $(function () {
+                $('#add_problem_dropdown').dropdown();
+            });
+        </script>
+        <script>
+            $(function () {
+                $('.ui.search').search({
+                    debug: true,
+                    apiSettings: {
+                        url: '/api/v2/search/problems/{query}',
+                        cache: false
+                    },
+                    fields: {
+                        title: 'name'
+                    }
+                });
+            });
+        </script>
+    </div>
+<% include footer %>

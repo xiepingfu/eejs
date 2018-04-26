@@ -1,0 +1,122 @@
+<% include header %>
+
+
+    <div class="ui main container">
+        <style>
+            #avatar_container:before {
+                content: "";
+                display: block;
+                padding-top: 100%;
+            }
+        </style>
+        
+        <div class="padding">
+            <div class="ui grid">
+                <div class="row">
+                    <div class="five wide column">
+                        <div class="ui card" style="width: 100%; " id="user_card">
+                            <div class="blurring dimmable image" id="avatar_container">
+                            <%if(loginuser==user.user_id){%>
+                                <div class="ui dimmer transition hidden">
+                                    <div class="content">
+                                        <div class="center" style="margin-top: 45%;">
+                                            <a class="ui inverted button" href="/user/<%=user.user_id%>/edit">
+                                                <i class="edit icon"></i>修改资料</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <%}%>
+                                <img style="margin-top: -100%; " src="/images/loj_personal.png"> </div>
+                            <div class="content">
+                                <div class="header"><%=user.user_id%> </div>
+                                <div class="meta">
+                                    <a class="group">普通用户</a>
+                                </div>
+                            </div>
+                            <div class="extra content">
+                                <a>
+                                    <i class="check icon"></i>通过 <%=user.solved%> 题</a>
+                                <a>
+                                    <i class="star icon"></i>排名 1</a>
+                            </div>
+                        </div>                        
+                        
+                    </div>
+                    <div class="eleven wide column">
+                        <div class="ui grid">
+                            <div class="row">
+                                <div class="sixteen wide column">
+                                    <div class="ui grid">
+                                        <div class="eight wide column">
+                                            <div class="ui grid">
+                                                <div class="row">
+                                                    <div class="column">
+                                                        <h4 class="ui top attached block header">用户名</h4>
+                                                        <div class="ui bottom attached segment"><%=user.user_id%></div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="column">
+                                                        <h4 class="ui top attached block header">昵称</h4>
+                                                        <div class="ui bottom attached segment" class="font-content"><%=user.nick%></div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="column">
+                                                        <h4 class="ui top attached block header">Email</h4>
+                                                        <div class="ui bottom attached segment" class="font-content"><%=user.email%></div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="column">
+                                                        <h4 class="ui top attached block header">注册于</h4>
+                                                        <div class="ui bottom attached segment" class="font-content">
+                                                            <%=user.reg_time%>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                                <div class="row">
+                                                    <div class="column">
+                                                        <h4 class="ui top attached block header">通过的题目</h4>
+                                                        <div class="ui bottom attached segment">
+                                                            <a href="/problem/1"><%=user.solved%></a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="eight wide column">
+                                            <div class="ui grid">
+                                                <div class="row">
+                                                    <div class="column">
+                                                        <h4 class="ui top attached block header">统计</h4>
+                                                        <div class="ui bottom attached segment">
+                                                            <div id="pie_chart_legend"></div>
+                                                            <div style="width: 260px; height: 260px; margin-left: 33.5px; ">
+                                                                <canvas style="width: 50%; " id="pie_chart"></canvas>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="column">
+                                    <h4 class="ui top attached block header">帖子</h4>
+                                    <div class="ui bottom attached center aligned segment"> 该用户从未发表帖子 </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script>$(function () { $('#user_card .image').dimmer({ on: 'hover' }); var pie = new Chart(document.getElementById('pie_chart').getContext('2d'), { type: 'pie', data: { datasets: [{ data: [<%=submissions['4']%>, <%=submissions['6']%>, <%=submissions['10']%>, <%=submissions['7']%>, <%=submissions['8']%>, <%=submissions['11']%>], backgroundColor: ["#66dd66", "#ff6384", "darkorchid", "#ffce56", "#00b5ad", "#35a0e8"] }], labels: ["Accepted", "Wrong Answer", "Runtime Error", "Time Limit Exceeded", "Memory Limit Exceeded", "Compile Error"] }, options: { responsive: true, legend: { display: false }, legendCallback: function (chart) { var text = []; text.push('<ul style="list-style: none; padding-left: 20px; margin-top: 0; " class="' + chart.id + '-legend">'); var data = chart.data; var datasets = data.datasets; var labels = data.labels; if (datasets.length) { for (var i = 0; i < datasets[0].data.length; ++i) { text.push('<li style="font-size: 12px; width: 50%; display: inline-block; color: #666; "><span style="width: 10px; height: 10px; display: inline-block; border-radius: 50%; margin-right: 5px; background-color: ' + datasets[0].backgroundColor[i] + '; "></span>'); if (labels[i]) { text.push(labels[i]); } text.push('</li>'); } } text.push('</ul>'); return text.join(''); } }, }); document.getElementById('pie_chart_legend').innerHTML = pie.generateLegend(); });</script>
+        <script src="https://dn-menci.qbox.me/libreoj/libs/semantic-ui/semantic.min.js"></script>
+        <script src="https://dn-menci.qbox.me/libreoj/libs/Chart.js/Chart.bundle.min.js"></script>
+    </div>
+<% include footer %>

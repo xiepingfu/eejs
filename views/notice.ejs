@@ -1,0 +1,22 @@
+<% include header %>
+
+<style type="text/css" xmlns:style="http://www.w3.org/1999/xhtml">
+.small{
+  font-size: 0.7em;
+}
+</style>
+
+<div class="ui main container">
+
+    <div class="padding">
+        <h1><%=news.title%></h1>
+        <p><%=news.time%>
+            
+        </p>
+        <div class="ui existing segment">
+            <div id="content" class="font-content"><div style="position: relative; overflow: hidden; "><%-news.content%></div>
+        </div>
+    </div>
+</div>
+</div>
+<% include footer %>
