@@ -16,12 +16,14 @@ router.get('/', async function (req, res, next) {
             lan:lan,
             sta:sta
         };
-        let sub = await Sub.selectAllData();
+        let count = await Sub.selectAllCount();
+        count = count[0].count;
         var page = req.query.page;
         if (!page) page = 1;
         indexContext.page = page;
-        indexContext.pages = sub.length / 50;
-        indexContext.submissions = sub.slice(0+(page-1)*50,page*50);
+        indexContext.pages = (count+30) / 30;
+        indexContext.submissions =  await Sub.selectAllData([count+1000-(page)*30,1000+count-(page-1)*30]);
+        console.log([count+1000-(page)*30,1000+count-(page-1)*30]);
         indexContext.menuActive = 'submissions';
         indexContext.loginuser = '';
         indexContext.privilege = 0;
@@ -45,6 +47,7 @@ router.get('/query', async function (req, res, next) {
         var uid = req.query.user_id;
         var lan = req.query.language;
         var sta = req.query.status;
+        var cid = req.query.cid;
         indexContext.options = {
             'pid':pid,
             'uid':uid,
@@ -56,7 +59,8 @@ router.get('/query', async function (req, res, next) {
         if(!uid) uid='%';
         if(!lan) lan='%';
         if(!sta) sta='%';
-        var options=[pid,uid,lan,sta];
+        if(!cid) cid='%';
+        var options=[pid,uid,lan,sta,cid];
         let sub = await Sub.selectWhere(options);
         console.log(sub);
         var page = req.query.page;

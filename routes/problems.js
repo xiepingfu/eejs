@@ -8,12 +8,13 @@ router.get('/', async function (req, res, next) {
     indexContext.title = '题目 - hnistoj';
     try {
         indexContext.menuActive = 'problems';
-        let pro = await problems.selectAllData('');
+        let count = await problems.selectCount();
+        count = count[0].count;
         var page = req.query.page;
         if (!page) page = 1;
         indexContext.page = page;
-        indexContext.pages = pro.length / 50;
-        indexContext.problems = pro.slice(0 + 50 * (page - 1), page * 50);
+        indexContext.pages = (count+99) / 50;
+        indexContext.problems = await problems.selectAllData([1000+(page-1)*50, 1000+page*50]);
         indexContext.loginuser = '';
         indexContext.privilege = 0;
         if (req.session.loginuser) {

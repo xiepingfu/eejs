@@ -40,7 +40,7 @@
                 <div class="column">
                     <div class="ui buttons">
                         <a class="small ui primary button" href="#submit_code">提交</a>
-                        <a class="small ui positive button" href="/submissions?problem_id=1">提交记录</a>
+                        <a class="small ui positive button" href="/submissions/query?problem_id=<%=problem.problem_id%> ">提交记录</a>
                         <a class="small ui orange button" href="/problem/1/statistics/fastest">统计</a>
                         <a class="small ui brown button" href="/discussion/problem/1" style="position: relative; ">
                             讨论
@@ -104,7 +104,7 @@
                     <h4 class="ui top attached block header">数据范围与提示</h4>
                     <div class="ui bottom attached segment font-content">
                         <div style="position: relative; overflow: hidden; ">
-                            <%-problem.hnit%>
+                            <%-problem.hint%>
                         </div>
                     </div>
                 </div>

@@ -1,93 +1,88 @@
-   <% include header %>
-<div class="ui main container">
+<% include header %>
+  <div class="ui main container">
 
-<div class="padding">
-  <h1><%=contest.title%></h1>
-  <div style="margin-bottom: 30px;"><div style="position: relative; overflow: hidden; ">
-  <p><%=contest.description%>管理员很懒，什么页没写！</p>
-</div></div>
-  
-  
-  
-  
-  
-  <div class="ui pointing below left label">2018-04-15 13:00:00</div>
-  <div class="ui pointing below right label">2018-04-15 23:00:00</div>
-  
-  <div id="timer-progress" class="ui tiny indicating progress success" data-percent="100">
-    <div class="bar" style="width: 100%;"></div>
-  </div>
-  <div class="ui grid">
-    <div class="row">
-      <div class="column">
-        <div class="ui buttons">
-          
-            <a class="ui small blue button" href="/contest/31/ranklist">排行榜</a>
-          
-          
-          <a class="ui small positive button" href="/submissions?contest=31">提交记录</a>
-          
+    <div class="padding">
+      <h1>
+        <%=contest.title%>
+      </h1>
+      <div style="margin-bottom: 30px;">
+        <div style="position: relative; overflow: hidden; ">
+          <p>
+            <%=contest.description%>管理员很懒，什么页没写！</p>
         </div>
       </div>
-    </div>
-  
-    <div class="row">
-      <div class="column">
-        <h4 class="ui top attached block header">信息与公告</h4>
-        <div class="ui bottom attached segment font-content">
-          <div style="position: relative; overflow: hidden; "><p><strong><a href="">公告</a></strong></p>
+
+      <div class="ui grid">
+        <div class="row">
+          <div class="column">
+            <div class="ui buttons">
+
+              <a class="ui small blue button" href="/contest/31/ranklist">排行榜</a>
+
+
+              <a class="ui small positive button" href="/submissions?contest=31">提交记录</a>
+
+            </div>
+          </div>
         </div>
+
+        <div class="row">
+          <div class="column">
+            <h4 class="ui top attached block header">信息与公告</h4>
+            <div class="ui bottom attached segment font-content">
+              <div style="position: relative; overflow: hidden; ">
+                <p>
+                  <strong>
+                    <a href="">公告</a>
+                  </strong>
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
-      </div>
-    </div>
-  
-  
-    <div class="row">
-      <div class="column">
-         <table class="ui selectable celled table">
-            <thead>
-              <tr>
-                <th class="one wide" style="text-align: center">状态</th>
-                <th>题目</th>
-                
+
+
+        <div class="row">
+          <div class="column">
+            <table class="ui selectable celled table">
+              <thead>
+                <tr>
+                  <th class="one wide" style="text-align: center">状态</th>
+                  <th class="one wide">编号</th>
+                  <th>题目</th>
+
                   <th class="one wide center aligned">统计</th>
-                
-              </tr>
-            </thead>
-            <tbody>
-              <%problems.forEach(function(item){%>
-              <tr>
-                <td class="center aligned" style="white-space: nowrap; ">
-                
-                </td>
-                <td><a href="/contest/31/problem/1"><%=item.title%></a></td>
-                
-                  <td class="center aligned" style="white-space: nowrap; ">
-                  <a href="/contest/31/submissions?problem_id=1&amp;status=Accepted">0</a>
-                  /
-                    <a href="/contest/31/submissions?problem_id=1&amp;min_score=1">3</a>
-                    /
-                  <a href="/contest/31/submissions?problem_id=1">3</a>
-                  </td>
-              </tr>
-            <%});%>
-            </tbody>
-        </table>
+
+                </tr>
+              </thead>
+              <tbody>
+                <% let pid = 0; %>
+                <%problems.forEach(function(item){%>
+                  <tr>
+                    <td class="center aligned" style="white-space: nowrap; ">
+
+                    </td>
+                    <td><%=pid%> </td>
+                    <td>
+                      <a href="/contests/<%=contest.contest_id%>/problem/<%=item.pid%>?pnum=<%=pid%>">
+                        <%=item.title%>
+                      </a>
+                    </td>
+                    <td class="center aligned" style="white-space: nowrap; ">
+                      <a href="/contest/31/submissions?problem_id=1&amp;status=Accepted"><%=item.accepted%></a>
+                      /
+                      <a href="/contest/31/submissions?problem_id=1&amp;min_score=1"><%=item.submit%></a>
+                    </td>
+                  </tr>
+                  <% pid=pid+1; %>
+                  <%});%>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
       </div>
     </div>
-  
-  </div>
-</div>
 
-<script>
-$(function () {
-  setInterval(function () {
-    $('#timer-progress').progress({
-      value: Date.now() / 1000 - 1523768400,
-      total: 36000
-    });
-  }, 5000);
-});
-</script>
-    </div>
-    <% include footer %>
+  </div>
+<% include footer %>

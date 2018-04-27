@@ -1,0 +1,50 @@
+<style>
+.ui.label.pointing.below.left::before {
+  left: 12%;
+}
+
+.ui.label.pointing.below.right::before {
+  left: 88%;
+}
+
+.ui.label.pointing.below.left {
+  margin-bottom: 0;
+}
+
+.ui.label.pointing.below.right {
+  margin-bottom: 0;
+  float: right;
+}
+
+#back_to_contest {
+  display: none;
+}
+</style>
+
+<script>
+var start_time = new Date('<%=contest.start_time%>').getTime();
+var end_time = new Date('<%=contest.end_time%>').getTime();
+var cur_time = Date.now();
+$(function () {
+  $('#timer-progress').progress({
+    value: (Date.now()-start_time),
+    total: end_time - start_time
+});
+  setInterval(function () {
+      $('#timer-progress').progress({
+        value: (Date.now()-start_time),
+        total: end_time - start_time
+    });
+  }, 5000);
+});
+</script>
+
+<% let timePercentage=0; %>
+    <div id="timer-progress" class="ui tiny indicating progress<% if (timePercentage == 100) { %> success<% } %>">
+    <div class="bar" id="progress-bar" style="width:<%=(cur_time-start_time)/(end_time-start_time)*100%>%;height:47px;position:fixed;top:0;"></div>
+</div>      
+<div style="position:fixed;top:60;width:100%;margin-top:10px;">
+<div class="ui pointing large green left label"><%= contest.start_time %></div>
+<div class="ui pointing large red right label" style="float:right;margin-right:0px;"><%= contest.end_time %></div>
+
+</div>

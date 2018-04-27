@@ -167,7 +167,7 @@
       <%}%>
       <%}%>
     <%}%>
-    <a class="<%if(parseInt(pages)==page){%>disabled<%}%> icon item" href="/submissions?page=2" id="page_next">
+    <a class="<%if(parseInt(pages)==page){%>disabled<%}%> icon item" href="/submissions?page=<%=parseInt(page)+1%>" id="page_next">
       <i class="right chevron icon"></i>
     </a>
   </div>
