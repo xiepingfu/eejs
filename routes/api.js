@@ -51,13 +51,12 @@ router.post('/news/top', async (req, res) => {
     try {
         res.setHeader('Content-Type', 'application/json');
         let News = require('../modles/news');
-        let isTop= 0;
-        if(req.body.checked=='false')
-        {
+        let isTop = 0;
+        if (req.body.checked == 'false') {
             isTop = 1;
             console.log(req.body.checked);
-        }    
-        let resualt = await News.changeTop([isTop,req.body.news_id]);
+        }
+        let resualt = await News.changeTop([isTop, req.body.news_id]);
         res.send({ error_code: 0 });
     } catch (e) {
         console.log(e);
@@ -69,12 +68,11 @@ router.post('/news/public', async (req, res) => {
     try {
         res.setHeader('Content-Type', 'application/json');
         let News = require('../modles/news');
-        let isPublic= 'Y';
-        if(req.body.checked=='false')
-        {
+        let isPublic = 'Y';
+        if (req.body.checked == 'false') {
             isPublic = 'N';
-        }    
-        let resualt = await News.changePublic([isPublic,req.body.news_id]);
+        }
+        let resualt = await News.changePublic([isPublic, req.body.news_id]);
         res.send({ error_code: 0 });
     } catch (e) {
         console.log(e);
@@ -91,13 +89,13 @@ router.post('/news/edit', async (req, res) => {
         let title = req.body.title;
         let isPublic = req.body.isPublic;
         let isTop = req.body.isTop;
-        if(isPublic=='false') isPublic='Y';
-        else isPublic='N';
-        if(isTop=='false') isTop=0;
-        else isTop=1;
+        if (isPublic == 'false') isPublic = 'Y';
+        else isPublic = 'N';
+        if (isTop == 'false') isTop = 0;
+        else isTop = 1;
         let News = require('../modles/news');
         var ti = new Date().toLocaleString();
-        var resualt = await News.updateWhere([title,content,ti,isTop,isPublic,markdown,news_id]);
+        var resualt = await News.updateWhere([title, content, ti, isTop, isPublic, markdown, news_id]);
         res.send({ error_code: 1 });
     } catch (e) {
         console.log(e);
@@ -115,13 +113,13 @@ router.post('/newsAdd', async (req, res) => {
         let uid = req.body.uid;
         let isPublic = req.body.isPublic;
         let isTop = req.body.isTop;
-        if(isPublic=='false') isPublic='Y';
-        else isPublic='N';
-        if(isTop=='false') isTop=0;
-        else isTop=1;
+        if (isPublic == 'false') isPublic = 'Y';
+        else isPublic = 'N';
+        if (isTop == 'false') isTop = 0;
+        else isTop = 1;
         let News = require('../modles/news');
         var ti = new Date().toLocaleString();
-        var resualt = await News.insertOne([uid,title,content,ti,isTop,isPublic,markdown]);
+        var resualt = await News.insertOne([uid, title, content, ti, isTop, isPublic, markdown]);
         res.send({ error_code: 1 });
     } catch (e) {
         console.log(e);
@@ -149,6 +147,33 @@ router.post('/register', async (req, res) => {
     } catch (e) {
         console.log(e);
         res.send({ error_code: e });
+    }
+});
+
+router.post('/submitCode', async function (req, res, next) {
+    try {
+        console.log('submit code');
+        var lanCode = {
+            'cpp': 1,
+            'c': 0,
+            'java': 3
+        };
+        let options = {};
+        options.code = req.body.code;
+        options.language = lanCode[req.body.language];
+        options.problem_id = req.body.problem_id;
+        options.user_id = req.session.loginuser;
+        options.in_data = new Date().toLocaleString();
+        options.code_length = options.code.length;
+        options.ip = '0.0.0.0';
+        let Sub = require('../modles/submissions');
+        let resualt = await Sub.insertNew(options);
+        console.log(resualt);
+        res.send({ error_code: 0 });
+
+    }
+    catch (e) {
+        console.log(e);
     }
 });
 

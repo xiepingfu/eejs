@@ -19,6 +19,20 @@ async function selectWhere(options) {
     return dataList;
 }
 
+async function insertNew(options) {
+    let sql = 'INSERT INTO solution(problem_id,user_id,in_date,language,ip,code_length,result) VALUES(?,?,NOW(),?,?,?,14)';
+    let dataList = await mysql.query(sql,[options.problem_id,options.user_id,options.language,options.ip,options.code_length]);
+    sql = 'SELECT MAX(solution_id) AS solution_id FROM solution';
+    dataList = await mysql.query(sql);
+    let solution_id = dataList[0].solution_id;
+    sql = "INSERT INTO `source_code_user`(`solution_id`,`source`)VALUES(?,?)";
+    dataList = await mysql.query(sql,[solution_id,options.code]);
+    sql = "INSERT INTO `source_code`(`solution_id`,`source`)VALUES(?,?)";
+    dataList = await mysql.query(sql,[solution_id,options.code]);
+    return dataList;
+}
+
+exports.insertNew=insertNew;
 exports.selectAllData=selectAllData;
 exports.selectWhere=selectWhere;
 exports.selectCount=selectCount;
