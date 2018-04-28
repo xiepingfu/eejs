@@ -60,12 +60,12 @@
                             <a class="<%if(parseInt(page)==i){%>active<%}%> item" href="/ranklist?page=<%=i%>"><%=i%></a>
                             <%}else{ %>
                             <%if(parseInt(i)<page && ileft==0){%>
-                                <%ileft=1%>
-                                <a class="item disabled" href="">....</a>
-                            <%}else if(parseInt(i)>page && iright==0){%>
-                                <%iright=1%>
-                                <a class="item disabled" href="">....</a>
-                            <%}%>
+                            <%ileft=1%>
+                            <a class="item disabled" href="">....</a>
+                          <%}else if(parseInt(i)>page && iright==0){%>
+                            <%iright=1%>
+                            <a class="item disabled" href="">....</a>
+                          <%}%>
                         <%}%>
                         <%}else{%>
                             <a class="<%if(parseInt(page)==i){%>active<%}%> item" href="/ranklist?page=<%=i%>"><%=i%></a>

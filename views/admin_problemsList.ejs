@@ -1,0 +1,232 @@
+<% include header %>
+<div class="ui main container">
+<div class="padding">
+    <div class="ui grid" style="margin-bottom: 10px; ">
+        <div class="row" style="white-space: nowrap; ">
+            <div class="seven wide column">
+
+                <form action="/problems/search" method="get">
+                    <div class="ui search" style="width: 280px; height: 28px; margin-top: -5.3px; ">
+                        <div class="ui left icon input" style="width: 100%; ">
+                            <input class="prompt" style="width: 100%; " type="text" placeholder="编号 / 题目名 …" name="keyword">
+                            <i class="search icon"></i>
+                        </div>
+                        <div class="results" style="width: 100%; "></div>
+                    </div>
+                </form>
+
+            </div>
+            <div class="nine wide right aligned column">
+                <div style="margin-left: 10px;margin-right: 10px;  display: inline-block; ">
+
+                </div>
+                <a href="/admin/problem/edit"><button class="ui primary button">添加问题</button></a>
+            </div>
+        </div>
+    </div>
+    <div style="text-align: center; ">
+    <div class="ui pagination menu" style="box-shadow: none; ">
+    <a class=" <%if(parseInt(page)<=1){%>disabled<%}%> icon item" id="page_prev" href="/admin/problem?page=<%=parseInt(page)-1%>">
+    <i class="left chevron icon"></i>
+</a>
+<%
+var ileft=0;
+var iright=0;
+%>
+<%for(var i=1; i<=pages; i++){%>
+    <%if(pages>=25){%>
+        <% if(Math.abs(i-page)<=2 || Math.abs(pages-i)<=1 || Math.abs(i)<=2){ %>
+            <a class="item <%if(i==page){%>active<%}%>" href="/admin/problem?page=<%=i%>"><%=i%></a>
+        <%}else{ %>
+        <%if(parseInt(i)<page && ileft==0){%>
+        <%ileft=1%>
+        <a class="item disabled" href="">....</a>
+    <%}else if(parseInt(i)>page && iright==0){%>
+        <%iright=1%>
+        <a class="item disabled" href="">....</a>
+        <%}%>
+        <%}%>
+    <%}else{%>
+            <a class="item <%if(i==page){%>active<%}%>" href="/admin/problem?page=<%=i%>"><%=i%></a>
+    <%}%>
+<%}%>
+<a class="<%if(parseInt(page)>=parseInt(pages)){%>disabled<%}%> icon item" href="/admin/problem?page=<%=parseInt(page)+1%>" id="page_next">
+    <i class="right chevron icon"></i>
+</a>
+    </div>
+</div>
+</div>
+
+<table class="ui very white center aligned table selectable">
+    <thead>
+        <tr>
+            <th class="one wide">
+                <a href="/problems?sort=id&order=desc">编号
+                    <i class="angle up icon"></i>
+                </a>
+            </th>
+            <th class="one wide">
+                <a href="/problems?sort=title&order=asc">题目名称</a>
+            </th>
+            <th class="one wide">
+                <a href="/problems?sort=ac_num&order=desc">通过</a>
+            </th>
+            <th class="one wide">
+                <a href="/problems?sort=submit_num&order=desc">提交</a>
+            </th>
+            <th class="one wide">公开
+            </th>
+            <th class="one wide">删除
+            </th>
+            <th class="one wide">编辑
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    <script>
+        function public_problem(pid)
+        {   
+            $.ajax({
+                url: "/api/problem/public",
+                type: 'POST',
+                data: {
+                    "problem_id": pid,
+                    "checked": $("#isPublic"+pid).is(":checked"),
+                    "_csrf": document.head.getAttribute('data-csrf-token')
+                },
+                async: true,
+                success: function (data) {
+                    error_code = data.error_code;
+                    switch (error_code) {
+                        case 0:
+                            alert(data.error_code);
+                            return;
+                        default:
+                            alert("未知错误");
+                            break;
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(XMLHttpRequest.responseText);
+                    alert("未知错误");
+                }
+            });
+        };
+        function delete_problem(pid)
+        {
+            var r = confirm("确定删除" + pid + "吗？");
+            if (r == false) {
+                return;
+            }
+            $.ajax({
+                url: "/api/problem/delete",
+                type: 'POST',
+                data: {
+                    "problem_id": pid,
+                    "_csrf": document.head.getAttribute('data-csrf-token')
+                },
+                async: true,
+                success: function (data) {
+                    error_code = data.error_code;
+                    switch (error_code) {
+                        case 0:
+                            alert(data.error_code);
+                            return;
+                        default:
+                            alert("未知错误");
+                            break;
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(XMLHttpRequest.responseText);
+                    alert("未知错误");
+                }
+            });
+        };
+    </script>
+    <% problems.forEach(function(item){ %>
+        <tr style="height: 44px; ">
+            <td><%=item.problem_id%>
+            </td>
+            <td><a href="/problems/<%=item.problem_id%>"><%=item.title%></td></a>
+            <td>
+            <%=item.accepted%>
+            </td>
+            <td><%=item.submit%></td>
+            <td>
+                <div class="ui toggle checkbox" onclick="javascript:public_problem('<%=item.problem_id%>');">
+                    <input type="checkbox" name="public"  id='isPublic<%=item.problem_id%>' <%if(item.defunct=='N'){%>checked<%}%> >
+                    <label></label>
+                </div>
+            </td>
+            <td>
+                <a href="javascript:delete_problem('<%=item.problem_id%>')" style="color:red;">删除
+                </a>
+            </td>
+            <td>
+                <a href="/admin/problem/edit?pid=<%=item.problem_id%>">编辑
+                </a>
+            </td>
+        </tr>
+    <% }); %>
+    </tbody>
+</table>
+<br>
+
+<div style="text-align: center; ">
+    <div class="ui pagination menu" style="box-shadow: none; ">
+    <a class=" <%if(parseInt(page)<=1){%>disabled<%}%> icon item" id="page_prev" href="/admin/problem?page=<%=parseInt(page)-1%>">
+    <i class="left chevron icon"></i>
+</a>
+<%
+var ileft=0;
+var iright=0;
+%>
+<%for(var i=1; i<=pages; i++){%>
+    <%if(pages>=18){%>
+        <% if(Math.abs(i-page)<=4 || Math.abs(pages-i)<=4 || Math.abs(i)<=4){ %>
+            <a class="item <%if(i==page){%>active<%}%>" href="/admin/problem?page=<%=i%>"><%=i%></a>
+        <%}else{ %>
+        <%if(parseInt(i)<page && ileft==0){%>
+        <%ileft=1%>
+        <a class="item disabled" href="">....</a>
+    <%}else if(parseInt(i)>page && iright==0){%>
+        <%iright=1%>
+        <a class="item disabled" href="">....</a>
+        <%}%>
+        <%}%>
+    <%}else{%>
+            <a class="item <%if(i==page){%>active<%}%>" href="/admin/problem?page=<%=i%>"><%=i%></a>
+    <%}%>
+<%}%>
+<a class="<%if(parseInt(page)>=parseInt(pages)){%>disabled<%}%> icon item" href="/admin/problem?page=<%=parseInt(page)+1%>" id="page_next">
+    <i class="right chevron icon"></i>
+</a>
+    </div>
+</div><script>
+    document.addEventListener('keydown', function (event) {
+        if (event.keyCode === 39) document.getElementById('page_next').click();
+        else if (event.keyCode === 37) document.getElementById('page_prev').click();
+    });
+
+    $(function () {
+        $('#add_problem_dropdown').dropdown();
+    });
+</script>
+<script>
+    $(function () {
+        $('.ui.search').search({
+            debug: true,
+            apiSettings: {
+                url: '/api/v2/search/problems/{query}',
+                cache: false
+            },
+            fields: {
+                title: 'name'
+            }
+        });
+    });
+</script>
+</div>
+
+<% include footer %>

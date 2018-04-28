@@ -57,17 +57,14 @@ async function Cproblems(options) {
     let problems = await mysql.query(sql,options);
     return problems;
 }
-/*
-"select * from (SELECT `problem`.`title` as `title`,`problem`.`problem_id` as `pid`,source as source,contest_problem.num as pnum
-		FROM `contest_problem`,`problem`
-		WHERE `contest_problem`.`problem_id`=`problem`.`problem_id` 
-		AND `contest_problem`.`contest_id`=? ORDER BY `contest_problem`.`num` 
-                ) problem
-                left join (select problem_id pid1,count(distinct(user_id)) accepted from solution where result=4 and contest_id=? group by pid1) p1 on problem.pid=p1.pid1
-                left join (select problem_id pid2,count(1) submit from solution where contest_id=? group by pid2) p2 on problem.pid=p2.pid2
-		order by pnum"
-*/
+
+async function changePublic(options) {
+    let sql = 'UPDATE contest SET defunct=? WHERE contest_id=?';
+    let dataList = await mysql.query(sql,options);
+    return dataList;
+}
 
 exports.selectAllData = selectAllData;
 exports.selectWhere = selectWhere;
 exports.Cproblems = Cproblems;
+exports.changePublic = changePublic;

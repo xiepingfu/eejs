@@ -6,6 +6,7 @@ var logger = require('morgan');
 var session = require('express-session');
 var FileStore = require('session-file-store')(session);
 
+
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 var loginRouter = require('./routes/login');
@@ -22,8 +23,6 @@ var adminRouter = require('./routes/admin');
 var noticeRouter = require('./routes/notice');
 
 var app = express();
-
-
 
 var identityKey = 'skey';
 

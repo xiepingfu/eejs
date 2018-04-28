@@ -53,13 +53,13 @@
                                             <% if(Math.abs(i-page)<=2 || Math.abs(pages-i)<=1 || Math.abs(i)<=1){ %>
                                                 <a class="item <%if(i==page){%>active<%}%>" href="/problems?page=<%=i%>"><%=i%></a>
                                             <%}else{ %>
-                                                <%if(ileft==0){%>
-                                                    <%ileft=1%>
-                                                    <a class="item disabled" href="">....</a>
-                                                <%}else if(iright==0){%>
-                                                    <%iright=1%>
-                                                    <a class="item disabled" href="">....</a>
-                                                <%}%>
+                                            <%if(parseInt(i)<page && ileft==0){%>
+                                            <%ileft=1%>
+                                            <a class="item disabled" href="">....</a>
+                                          <%}else if(parseInt(i)>page && iright==0){%>
+                                            <%iright=1%>
+                                            <a class="item disabled" href="">....</a>
+                                          <%}%>
                                             <%}%>
                                         <%}else{%>
                                                 <a class="item <%if(i==page){%>active<%}%>" href="/problems?page=<%=i%>"><%=i%></a>
@@ -75,7 +75,7 @@
                 </div>
             </div>
         </div>
-        <table class="ui very basic center aligned table selectable">
+        <table class="ui very white center aligned table selectable">
             <thead>
                 <tr>
                 <% if(loginuser == '><') {%>

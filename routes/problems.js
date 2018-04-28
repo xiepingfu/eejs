@@ -19,11 +19,8 @@ router.get('/', async function (req, res, next) {
         indexContext.privilege = 0;
         if (req.session.loginuser) {
             indexContext.loginuser = req.session.loginuser;
-            let user = await Users.findOne(indexContext.loginuser);
             indexContext.privilege = req.session.privilege;
-            let solved = await Users.solved(req.session.loginuser);
         }
-
     }
     catch (e) {
         console.log(e);

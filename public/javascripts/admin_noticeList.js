@@ -58,7 +58,7 @@ function top_news(news_id) {
             error_code = data.error_code;
             switch (error_code) {
                 case 0:
-                    delete_success(data.session_id);
+                    //delete_success(data.session_id);
                     return;
                 default:
                     alert("未知错误");
@@ -87,7 +87,7 @@ function public_news(news_id) {
             error_code = data.error_code;
             switch (error_code) {
                 case 0:
-                    delete_success(data.session_id);
+                    //delete_success(data.session_id);
                     return;
                 default:
                     alert("未知错误");

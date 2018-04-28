@@ -80,6 +80,68 @@ router.post('/news/public', async (req, res) => {
     }
 });
 
+router.post('/problem/public', async (req, res) => {
+    try {
+        res.setHeader('Content-Type', 'application/json');
+        let Problems = require('../modles/problems');
+        let isPublic = 'Y';
+        if (req.body.checked == 'false') {
+            isPublic = 'N';
+        }
+        console.log(isPublic);
+        let resualt = await Problems.changePublic([isPublic, req.body.problem_id]);
+        res.send({ error_code: 0 });
+    } catch (e) {
+        console.log(e);
+        res.send({ error_code: e });
+    }
+});
+
+router.post('/contest/public', async (req, res) => {
+    try {
+        res.setHeader('Content-Type', 'application/json');
+        let Contests = require('../modles/contest');
+        let isPublic = 'Y';
+        if (req.body.checked == 'false') {
+            isPublic = 'N';
+        }
+        console.log(req.body.contest_id);
+        let resualt = await Contests.changePublic([isPublic, req.body.contest_id]);
+        res.send({ error_code: 0 });
+    } catch (e) {
+        console.log(e);
+        res.send({ error_code: e });
+    }
+});
+
+router.post('/problem/delete', async (req, res) => {
+    try {
+        res.setHeader('Content-Type', 'application/json');
+        let Problems = require('../modles/problems');
+        let resualt = await Problems.deleteWhere([req.body.problem_id]);
+        res.send({ error_code: 0 });
+    } catch (e) {
+        console.log(e);
+        res.send({ error_code: e });
+    }
+});
+
+router.post('/problem/add', async (req, res) => {
+    try {
+        res.setHeader('Content-Type', 'application/json');
+        let Problems = require('../modles/problems');
+        let isPublic = "Y";
+        if (req.body.isPublic == 'true')
+            isPublic = "N";
+        let resualt = Problems.insertNew([req.body.title, req.body.time_limit, req.body.memory_limit, req.body.markdown, req.body.description, req.body.input, req.body.output, req.body.sample_input,
+        req.body.sample_output, req.body.hint, req.body.source, isPublic]);
+        res.send({ error_code: 0 });
+    } catch (e) {
+        console.log(e);
+        res.send({ error_code: e });
+    }
+});
+
 router.post('/news/edit', async (req, res) => {
     try {
         res.setHeader('Content-Type', 'application/json');
@@ -220,6 +282,29 @@ router.post('/userEdit', async function (req, res, next) {
         console.log(e);
         res.send({ error_code: e });
     }
+});
+
+var multer = require('multer');
+var uploadFolder = './upload/';
+var storage = multer.diskStorage({
+    destination: function(req, file, cb) {
+        cb(null, uploadFolder);
+    },
+    filename: function(req,file,cb) {
+        cb(null, Date.now() + '_' +file.originalname);
+    }
+});
+var upload = multer({storage:storage});
+
+router.post('/upload', upload.single('logo'), function (req, res, next) {
+    console.log(req.file);
+    var file = req.file;
+    console.log('文件类型：%s', file.mimetype);
+    console.log('原始文件名：%s', file.originalname);
+    console.log('文件大小：%s', file.size);
+    console.log('文件保存路径：%s', file.path);
+
+    res.send({ ret_code: '0' });
 });
 
 module.exports = router;

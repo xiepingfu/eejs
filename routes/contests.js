@@ -11,7 +11,7 @@ router.get('/', async function (req, res, next) {
         var page = req.query.page;
         if (!page) page = 1;
         indexContext.page = page;
-        indexContext.pages = contests.length / 10;
+        indexContext.pages = (contests.length+9) / 10;
         indexContext.contests = contests.slice(0 + 10 * (page - 1), page * 10);
         indexContext.menuActive = 'contests';
         indexContext.loginuser = '';

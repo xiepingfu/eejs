@@ -12,8 +12,8 @@
         crossorigin="anonymous"></script>
 </head>
 
-<body>
-    <div class="ui fixed secondary pointing menu" style="position: fixed; height: 48px;">
+<body style="background:url('/images/bg2.png');">
+    <div class="ui fixed green pointing menu" style="position: fixed; height: 48px;">
         <div class="ui container">
             <span class="item">HNISTOJ</span>
             <a class="item <% if (menuActive == 'index') { %> active<% } %>" id="index" href="/index">
@@ -36,7 +36,7 @@
                     <span class="text">管理</span>
                     <i class="dropdown icon"></i>
                     <div class="menu">
-                        <a class="item" href="/admin/notice">公告管理</a>
+                        <a class="item"  href="/admin/notice">公告管理</a>
                         <a class="item" href="/admin/problem">问题管理</a>
                         <a class="item" href="/admin/contest">竞赛管理</a>
                         <a class="item" href="/admin/user">用户管理</a>

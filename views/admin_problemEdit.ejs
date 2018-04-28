@@ -1,0 +1,167 @@
+<% include header %>
+
+<div class="ui main container">
+
+<style type="text/css">
+    .problem_header {
+        text-align: center;
+    }
+</style>
+<script>
+    function edit_submit(pid)
+    {
+        alert(pid);
+    };
+    function add_submit()
+    {
+        var markdown = problem_content.getMarkdown();  
+        var description = problem_content.getPreviewedHTML();
+        $.ajax({
+            url: "/api/problem/add",
+            type: 'POST',
+            data: {
+                "title": $("#title").val(),
+                "time_limit": $("#time_limit").val(),
+                "memory_limit": $("#memory_limit").val(),
+                "markdown": markdown,
+                "description": description,
+                "input": $("#input").val(),
+                "output": $("#output").val(),
+                "sample_input": $("#sample_input").val(),
+                "sample_output": $("#sample_output").val(),
+                "hint": $("#hint").val(),
+                "source": $("#source").val(),
+                "isPublic": $("#isPublic").is(":checked"),
+                "_csrf": document.head.getAttribute('data-csrf-token')
+            },
+            async: true,
+            success: function (data) {
+                error_code = data.error_code;
+                switch (error_code) {
+                    case 0:
+                        alert(data.error_code);
+                        return;
+                    default:
+                        alert("未知错误");
+                        break;
+                }
+            },
+            error: function (XMLHttpRequest, textStatus, errorThrown) {
+                alert(XMLHttpRequest.responseText);
+            }
+        });
+    };
+</script>
+<div class="padding">
+    <form class="ui form">
+        <div class="ui top attached tabular menu">
+            <a class="item active" data-tab="edit">编辑</a>
+        </div>
+        <div class="ui bottom attached tab segment active" data-tab="edit">
+            <div class="field">
+                <label for="title">题目名称</label>
+                <input class="font-content" type="text" id="title" name="title" value="<%=problem.title%>">
+                <div style="margin-top: 15px; " class="two fields">
+                    <div class="field">
+                        <label>时间限制 (s)</label>
+                        <input class="font-content" type="text" id="time_limit" name="time_limit" value="<%=problem.time_limit%>">
+                    </div>
+                    <div class="field">
+                        <label>内存限制 (M)</label>
+                        <input class="font-content" type="text" id="memory_limit" name="memory_limit" value="<%=problem.memory_limit%>">
+                    </div>
+                </div>
+                <label style="margin-top: 15px; " for="description">题目描述</label> 
+                <!-- *************************************  -->
+                <link rel="stylesheet" href="/editor/css/editormd.css" />
+                <div id="test-editormd">
+                    <textarea style="display:none;" id="problem_content"><%if(problem.markdown==null){%><%-problem.description%><%}else{%><%-problem.markdown%><%}%></textarea>
+                </div>
+                <script src="/editor/js/jquery.min.js"></script>
+                <script src="/editor/js/editormd.min.js"></script>
+                <script type="text/javascript">
+                    var problem_content;
+                    $(function () {
+                        problem_content = editormd("test-editormd", {
+                            width: "100%",
+                            height: 580,
+                            syncScrolling: "single",
+                            path: "/editor/lib/",
+                            saveHTMLToTextarea: true
+                        });
+                    });
+                </script>
+                <script>
+                    function submit() {
+                        var markdown = problem_content.getMarkdown();  
+                        var content = problem_content.getPreviewedHTML();
+                        var title = $('#title').val();
+                        var isPublic = $("#isPublic").is(":checked");
+                        var isTop = $("#isTop").is(":checked");
+                        $.ajax({
+                            url: "/api/problem/edit",
+                            type: 'POST',
+                            data: {
+                                "markdown": markdown,
+                                "title": title,
+                                "isPublic": isPublic,
+                                "isTop":isTop,
+                                "content": content,
+                                "problem_id": "<%=problem.problem_id%>",
+                                "_csrf": document.head.getAttribute('data-csrf-token')
+                            },
+                            async: true,
+                            success: function(data) {
+                                error_code = data.error_code;
+                                switch (error_code) {
+                                    case 1:
+                                        alert("修改成功！");
+                                        window.location.href = '/admin/notice';
+                                        break;
+                                    default:
+                                        alert('error!');
+                                        break;
+                                }
+                            },
+                            error:  function(XMLHttpRequest, textStatus, errorThrown) {
+                                alert(XMLHttpRequest.responseText);
+                            }
+                        });
+                    }
+                </script>
+                 <!-- *************************************  -->
+                <label style="margin-top: 15px; " for="input_format">输入格式</label>
+                <textarea class="font-content" rows="10" id="input" name="input"><%-problem.input%></textarea>
+                <label style="margin-top: 15px; " for="output_format">输出格式</label>
+                <textarea class="font-content" rows="10" id="output" name="output"><%-problem.output%></textarea>
+                <div style="margin-top: 15px; " class="two fields">
+                    <div class="field">
+                        <label>样例输入</label>
+                        <textarea class="font-content" rows="10" id="sample_input" name="sample_input"><%=problem.sample_input%></textarea>
+                    </div>
+                    <div class="field">
+                        <label>样例输出</label>
+                        <textarea class="font-content" rows="10" id="sample_output" name="sample_output"><%=problem.sample_output%></textarea>
+                    </div>
+                </div>
+                <label style="margin-top: 15px; ">数据范围与提示</label>
+                <textarea class="font-content" rows="10" id="hint" name="hint"><%-problem.hint%></textarea>
+                <label style="margin-top: 15px; ">标签</label>
+                <input class="font-content" type="text" id="source" name="source" value="<%-problem.source%>">
+                <div class="ui checkbox" style="margin-top: 15px; ">
+                    <input name="is_anonymous" type="checkbox" id="isPublic" <%if(problem.defunct=='N'){%>checked<%}%> >
+                    <label>
+                        <strong>公开此题目</strong>
+                    </label>
+                    <p style="margin-top: 5px; ">选择后，普通用户将能看到此题目。</p>
+                </div>
+            </div>
+        </div>
+
+        <a class="ui button" href="javascript:<%if(mode=='edit'){%> edit_submit('<%=problem.problem_id%>'); <%}else{%> add_submit(); <%}%>">
+        提交</a>
+
+    </form>
+</div>
+</div>
+<% include footer %>

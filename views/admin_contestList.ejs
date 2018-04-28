@@ -1,0 +1,227 @@
+<% include header %>
+
+    <div class="ui main container">
+        <div class="padding">
+            <div class="ui grid" style="margin-bottom: 10px; ">
+                <div class="row" style="white-space: nowrap; ">
+                    <div class="seven wide column">
+                        <form action="/problems/search" method="get">
+                            <div class="ui search" style="width: 280px; height: 28px; margin-top: -5.3px; ">
+                                <div class="ui left icon input" style="width: 100%; ">
+                                    <input class="prompt" style="width: 100%; " type="text" placeholder="标题 …" name="keyword">
+                                    <i class="search icon"></i>
+                                </div>
+                                <div class="results" style="width: 100%; "></div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="nine wide right aligned column">
+                        <div style="margin-left: 10px;margin-right: 10px; display: inline-block; ">
+                            <div style="text-align: center; ">
+                            <div class="ui pagination menu" style="box-shadow: none; ">
+                            <a class=" <%if(parseInt(page)<=1){%>disabled<%}%> icon item" id="page_prev" href="/admin/contest?page=<%=parseInt(page)-1%>">
+                                <i class="left chevron icon"></i>
+                            </a>
+                            <%
+                            var ileft=0;
+                            var iright=0;
+                            %>
+                            <%for(var i=1; i<=pages; i++){%>
+                                <%if(pages>=10){%>
+                                    <% if(Math.abs(i-page)<=2 || Math.abs(pages-i)<=2 || Math.abs(i)<=2){ %>
+                                        <a class="item <%if(i==page){%>active<%}%>" href="/admin/contest?page=<%=i%>"><%=i%></a>
+                                    <%}else{ %>
+                                        <%if(parseInt(i)<page && ileft==0){%>
+                                            <%ileft=1%>
+                                            <a class="item disabled" href="">....</a>
+                                        <%}else if(parseInt(i)>page && iright==0){%>
+                                            <%iright=1%>
+                                            <a class="item disabled" href="">....</a>
+                                        <%}%>
+                                    <%}%>
+                                <%}else{%>
+                                        <a class="item <%if(i==page){%>active<%}%>" href="/admin/contest?page=<%=i%>"><%=i%></a>
+                                <%}%>
+                            <%}%>
+                            <a class="<%if(parseInt(page)>=parseInt(pages)){%>disabled<%}%> icon item" href="/admin/contest?page=<%=parseInt(page)+1%>" id="page_next">
+                                <i class="right chevron icon"></i>
+                            </a>
+                        </div>
+                            </div>
+                        </div>
+
+                        </a>
+                        <div class="ui compact menu">
+                            <div class="ui simple dropdown item primary">添加竞赛
+                                <i class="dropdown icon"></i>
+                                <div class="menu">
+                                    <a href="admin_contestedit.html" class="item">在线竞赛</a>
+                                    <a href="admin_contestedit.html" class="item">现场竞赛</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <table class="ui very white center aligned table selectable">
+            <thead>
+                <tr>
+                    <th class="one wide">
+                        <a href="/problems?sort=id&order=desc">编号
+                            <i class="angle up icon"></i>
+                        </a>
+                    </th>
+                    <th class="two wide">
+                        <a href="/problems?sort=title&order=asc">标题</a>
+                    </th>
+                    <th class="two wide">
+                        <a href="/problems?sort=ac_num&order=desc">开始时间</a>
+                    </th>
+                    <th class="two wide">
+                        <a href="/problems?sort=ac_num&order=desc">结束时间</a>
+                    </th>
+                    <th class="one wide">公开 </th>
+                    <th class="one wide">删除 </th>
+                    <th class="one wide">编辑 </th>
+                    <th class="one wide">提交日志 </th>
+                </tr>
+            </thead>
+            <tbody>
+                <%contests.forEach(function(item){%>
+                <tr style="height: 44px; ">
+                    <td><%=item.contest_id%></td>
+                    <td class="left aligned">
+                        <a href="/contests/<%=item.contest_id%>"><%=item.title%>
+                            <% if(item.statu == 1) {%>
+                                    <span class="ui header">
+                                        <div class="ui mini grey label">已结束</div>
+                                    </span>
+                                <%  }%>
+                                <% if(item.statu == 2) {%>
+                                    <span class="ui header">
+                                        <div class="ui mini green label">进行中</div>
+                                    </span>
+                                <%  }%>
+                                <% if(item.statu == 3) {%>
+                                    <span class="ui header">
+                                        <div class="ui mini blue label">未开始</div>
+                                    </span>
+                                <%  }%>
+                        </a>
+                    </td>
+                    <td><%=item.start_time%></td>
+                    <td><%=item.end_time%></td>
+                    <td class="font-content">
+                    <div class="ui toggle checkbox" onclick="javascript:public_contest('<%=item.contest_id%>')">
+                    <input type="checkbox" name="public" id='isPublic<%=item.contest_id%>' <%if(item.defunct=='N'){%>checked<%}%>>
+                    </div>
+                    </td>
+                    <td><a class="ui red button" href="">删除
+                    </a></td>
+                    <td><a class="ui green button" href="">编辑
+                    </a></td>
+                    <td><a class="ui blue button" href="">下载
+                    </a></td>
+                </tr>
+                <%});%>
+            </tbody>
+        </table>
+        <script>
+            function public_contest(cid)
+            {
+                $.ajax({
+                    url: "/api/contest/public",
+                    type: 'POST',
+                    data: {
+                        "contest_id": cid,
+                        "checked": $("#isPublic"+cid).is(":checked"),
+                        "_csrf": document.head.getAttribute('data-csrf-token')
+                    },
+                    async: true,
+                    success: function (data) {
+                        error_code = data.error_code;
+                        switch (error_code) {
+                            case 0:
+                                //alert(data.error_code);
+                                return;
+                            default:
+                                alert("未知错误");
+                                break;
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert(XMLHttpRequest.responseText);
+                        alert("未知错误");
+                    }
+                });
+            };
+            function delete_contest(cid)
+            {
+                var r = confirm("确定删除" + cid + "吗？");
+                if (r == false) {
+                    return;
+                }
+                $.ajax({
+                    url: "/api/contest/delete",
+                    type: 'POST',
+                    data: {
+                        "contest_id": cid,
+                        "_csrf": document.head.getAttribute('data-csrf-token')
+                    },
+                    async: true,
+                    success: function (data) {
+                        error_code = data.error_code;
+                        switch (error_code) {
+                            case 0:
+                                //alert(data.error_code);
+                                return;
+                            default:
+                                alert("未知错误");
+                                break;
+                        }
+                    },
+                    error: function (XMLHttpRequest, textStatus, errorThrown) {
+                        alert(XMLHttpRequest.responseText);
+                        alert("未知错误");
+                    }
+                });
+            };
+        
+        </script>
+
+
+        <br>
+        <div style="text-align: center; ">
+        <div class="ui pagination menu" style="box-shadow: none; ">
+        <a class=" <%if(parseInt(page)<=1){%>disabled<%}%> icon item" id="page_prev" href="/admin/contest?page=<%=parseInt(page)-1%>">
+            <i class="left chevron icon"></i>
+        </a>
+        <%
+        var ileft=0;
+        var iright=0;
+        %>
+        <%for(var i=1; i<=pages; i++){%>
+            <%if(pages>=10){%>
+                <% if(Math.abs(i-page)<=2 || Math.abs(pages-i)<=2 || Math.abs(i)<=2){ %>
+                    <a class="item <%if(i==page){%>active<%}%>" href="/admin/contest?page=<%=i%>"><%=i%></a>
+                <%}else{ %>
+                    <%if(parseInt(i)<page && ileft==0){%>
+                        <%ileft=1%>
+                        <a class="item disabled" href="">....</a>
+                    <%}else if(parseInt(i)>page && iright==0){%>
+                        <%iright=1%>
+                        <a class="item disabled" href="">....</a>
+                    <%}%>
+                <%}%>
+            <%}else{%>
+                    <a class="item <%if(i==page){%>active<%}%>" href="/admin/contest?page=<%=i%>"><%=i%></a>
+            <%}%>
+        <%}%>
+        <a class="<%if(parseInt(page)>=parseInt(pages)){%>disabled<%}%> icon item" href="/admin/contest?page=<%=parseInt(page)+1%>" id="page_next">
+            <i class="right chevron icon"></i>
+        </a>
+    </div>
+        </div>
+       
+<% include footer %>

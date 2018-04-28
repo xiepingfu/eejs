@@ -29,14 +29,14 @@
                                     var iright=0;
                                     %>
                                     <%for(var i=1; i<=pages; i++){%>
-                                        <%if(pages>=8){%>
-                                            <% if(Math.abs(i-page)<=2 || Math.abs(pages-i)<=1 || Math.abs(i)<=1){ %>
+                                        <%if(pages>=10){%>
+                                            <% if(Math.abs(i-page)<=2 || Math.abs(pages-i)<=2 || Math.abs(i)<=2){ %>
                                                 <a class="item <%if(i==page){%>active<%}%>" href="/admin/notice?page=<%=i%>"><%=i%></a>
                                             <%}else{ %>
-                                                <%if(ileft==0){%>
+                                                <%if(parseInt(i)<page && ileft==0){%>
                                                     <%ileft=1%>
                                                     <a class="item disabled" href="">....</a>
-                                                <%}else if(iright==0){%>
+                                                <%}else if(parseInt(i)>page && iright==0){%>
                                                     <%iright=1%>
                                                     <a class="item disabled" href="">....</a>
                                                 <%}%>
@@ -137,13 +137,13 @@
                         <% if(Math.abs(i-page)<=4 || Math.abs(pages-i)<=4 || Math.abs(i)<=4){ %>
                             <a class="item <%if(i==page){%>active<%}%>" href="/admin/notice?page=<%=i%>"><%=i%></a>
                         <%}else{ %>
-                            <%if(ileft==0){%>
-                                <%ileft=1%>
-                                <a class="item disabled" href="">....</a>
-                            <%}else if(iright==0){%>
-                                <%iright=1%>
-                                <a class="item disabled" href="">....</a>
-                            <%}%>
+                        <%if(parseInt(i)<page && ileft==0){%>
+                        <%ileft=1%>
+                        <a class="item disabled" href="">....</a>
+                    <%}else if(parseInt(i)>page && iright==0){%>
+                        <%iright=1%>
+                        <a class="item disabled" href="">....</a>
+                        <%}%>
                         <%}%>
                     <%}else{%>
                             <a class="item <%if(i==page){%>active<%}%>" href="/admin/notice?page=<%=i%>"><%=i%></a>
