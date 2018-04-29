@@ -14,7 +14,7 @@ router.get('/', async function (req, res, next) {
         indexContext.menuActive = 'ranklist';
         var ranklist =  await userOld.selectAllData();
         console.log(ranklist.length/50);
-        indexContext.pages=ranklist.length/50;
+        indexContext.pages=(ranklist.length+49)/50;
         indexContext.ranklist=ranklist.slice(0+(page-1)*50,page*50);
         indexContext.loginuser = '';
         indexContext.privilege = 0;

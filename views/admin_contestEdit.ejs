@@ -1,0 +1,247 @@
+<% include header %>
+
+<div class="ui main container">
+
+<style type="text/css">
+    .problem_header {
+        text-align: center;
+    }
+</style>
+<div class="padding">
+    <form class="ui form" method="post" action="javascript:contest_submit();">
+        <div class="ui bottom attached tab segment active" data-tab="edit">
+            <div class="field">
+                <label for="title">竞赛标题</label>
+                <input class="font-content" type="text" id="title" name="title" value="<%=contest.title%>">
+                <div class="ui form" style="margin-top: 15px;">
+                    <div class="two fields">  
+                    <script>
+                        function contest_submit()
+                        {
+                            var title = $('#title').val();
+                            if(!title || title == "")
+                            {
+                                alert('标题不能为空！');
+                                return;
+                            }
+                            var start_time = new Date($('#start_date').val() +" "+ $('#start_time').val());
+                            var end_time = new Date($('#end_date').val() +" "+ $('#end_time').val());
+                            if(start_time > end_time)
+                            {
+                                alert("开始时间晚于结束时间！");
+                                return;
+                            }
+                            var language = 7;
+                            if($("#c").is(":checked") == false)
+                            {
+                                language = language & 6;
+                            }
+                            if($("#cpp").is(":checked") == false)
+                            {
+                                language = language & 5;
+                            }
+                            if($("#java").is(":checked") == false)
+                            {
+                                language = language & 3;
+                            }
+                            if(language == 0)
+                            {
+                                alert("至少选择一门语言！");
+                                return;
+                            }
+                            var isPublic = 1;
+                            if($("#public").is(":checked"))
+                                isPublic = 0;
+                            var pwd = $("#pwd").val();
+                            var Cproblems = $("#Cproblems").val();
+                            var description=$("#description").val();
+                            $.ajax({
+                                url: "/api/contest/<%=mode%>",
+                                type: 'POST',
+                                data: {
+                                    <%if(mode=='edit'){%>"contest_id": "<%=contest.contest_id%>",<%}%>
+                                    "title": title,
+                                    "start_time": start_time,
+                                    "end_time": end_time,
+                                    "language": language,
+                                    "isPublic": isPublic,
+                                    "Cproblems": Cproblems,
+                                    "password": pwd,
+                                    "description": description,
+                                    "_csrf": document.head.getAttribute('data-csrf-token')
+                                },
+                                async: true,
+                                success: function(data) {
+                                    error_code = data.error_code;
+                                    switch (error_code) {
+                                        case 0:
+                                            alert("修改成功！");
+                                            window.location.href = '/admin/contest';
+                                            break;
+                                        default:
+                                            alert(error_code);
+                                            break;
+                                    }
+                                },
+                                error:  function(XMLHttpRequest, textStatus, errorThrown) {
+                                    alert(XMLHttpRequest.responseText);
+                                }
+                            });
+                        }
+                        $(document).ready(function () {
+                            $('#end_date_ui').calendar({ 
+                                type: 'date',
+                                formatter: {
+                                    date: function(date, settings) {
+                                        if (!date) return '';
+                                        var year  = date.getFullYear();
+                                        var month = date.getMonth() + 1;
+                                        var day   = date.getDate();
+                                        month = month < 10 ? '0'+month : month;
+                                        day   = day   < 10 ? '0'+day   : day;
+                                        return year + '-' + month + '-' + day;
+                                    }
+                                }
+                            });
+                        });
+                        $(document).ready(function () {
+                            $('#start_date_ui').calendar({ 
+                                type: 'date',
+                                formatter: {
+                                    date: function(date, settings) {
+                                        if (!date) return '';
+                                        var year  = date.getFullYear();
+                                        var month = date.getMonth() + 1;
+                                        var day   = date.getDate();
+                                        month = month < 10 ? '0'+month : month;
+                                        day   = day   < 10 ? '0'+day   : day;
+                                        return year + '-' + month + '-' + day;
+                                    }
+                                }
+                            });
+                        });
+                        $(document).ready(function () {
+                            $('#start_time_ui').calendar({ 
+                                type: 'time',
+                            });
+                        });
+                        $(document).ready(function () {
+                            $('#end_time_ui').calendar({ 
+                                type: 'time',
+                            });
+                        });
+                    </script>  
+                    <script src="/javascripts/calendar.js"></script>
+                    <link rel="stylesheet" href="/stylesheets/calendar.min.css">
+                        <div class="field">
+                            <label>开始时间</label>
+                            <div class="inline fields">
+                                <div class="ui input left icon" id="start_date_ui">
+                                    <i class="calendar icon"></i>
+                                    <input type="text" id="start_date" placeholder="Date" value="<%=new Date(contest.start_time).toLocaleDateString()%>">
+                                </div>
+                                <div class="ui input left icon" id="start_time_ui">
+                                    <i class="time icon"></i>
+                                    <input type="text" id="start_time" placeholder="Time" value="<%=new Date(contest.start_time).toLocaleTimeString()%>">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="field">
+                            <label>结束时间</label>
+                            <div class="inline fields">
+                                <div class="ui input left icon" id="end_date_ui">
+                                    <i class="calendar icon"></i>
+                                    <input type="text" id="end_date" placeholder="Date" value="<%=new Date(contest.end_time).toLocaleDateString()%>">
+                                </div>
+                                <div class="ui input left icon" id="end_time_ui">
+                                    <i class="time icon"></i>
+                                    <input type="text" id="end_time" placeholder="Time" value="<%=new Date(contest.end_time).toLocaleTimeString()%>">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="ui grid form">
+                    <div class="three wide column">
+                        <label for="lang">语言</label>
+                        <div class="inline field">
+                            <div class="ui checkbox">
+                                <input type="checkbox" id="c" checked="" tabindex="0" class="hidden">
+                                <label>C</label>
+                            </div>
+                            <div class="ui checkbox">
+                                <input type="checkbox" id="cpp" checked="" tabindex="0" class="hidden">
+                                <label>C++</label>
+                            </div>
+                            <div class="ui checkbox">
+                                <input type="checkbox" id="java" checked="" tabindex="0" class="hidden">
+                                <label>JAVA</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="three wide column">
+                        <label>竞赛状态</label>
+                        <div class="inline fields">
+                            <div class="field">
+                                <div class="ui radio checkbox">
+                                    <input type="radio" id="public" name="fruit" <%if(contest.private==0){%>checked<%}%> tabindex="0" class="hidden">
+                                    <label>公开</label>
+                                </div>
+                            </div>
+                            <div class="field">
+                                <div class="ui radio checkbox">
+                                    <input type="radio" id="private" name="fruit" <%if(contest.private!=0){%>checked<%}%>  tabindex="0" class="hidden">
+                                    <label>需要权限</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="three wide column">
+                        <label>密码</label>
+                        <input type="text" id="pwd" placeholder="公开状态不需要密码" <%if(contest.private==0){%>readonly<%}%> >
+                    </div>
+                    <div class="seven wide column">
+                        <label>题目</label>
+                        <input type="text" id="Cproblems" name="Cproblems" placeholder="题目" value="<%problems.forEach(function(item){%><%=item.pid%>,<%});%>">
+                    </div>
+                </div>
+                <div class="ui form two fields" style="margin-top: 15px; ">
+                    <div class="field">
+                        <label for="description">竞赛描述</label>
+                        <textarea class="font-content" rows="15" id="description" name="description"><%=contest.description%></textarea>
+                    </div>
+                    <div class="field">
+                        <div class="field">
+                            <label for="allow_users">授权账号</label>
+                            <textarea class="font-content" rows="15" id="allow_users" name="allow_users" placeholder="把授权参与该场比赛的账号复制到此处"
+                                readonly></textarea>
+                        </div>
+                    </div>
+
+                </div>
+                <!-- ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ -->
+                
+            </div>
+        </div>
+        <div class="ui bottom attached tab segment" data-tab="preview" id="preview">
+            <h1 class="ui header problem_header" id="pv-title"></h1>
+            <h2 class="ui header">题目描述</h2>
+            <div class="font-content" id="pv-description"></div>
+            <h2 class="ui header">输入格式</h2>
+            <div class="font-content" id="pv-input"></div>
+            <h2 class="ui header">输出格式</h2>
+            <div class="font-content" id="pv-output"></div>
+            <h2 class="ui header">样例</h2>
+            <div class="font-content" id="pv-example"></div>
+            <h2 class="ui header">数据范围与提示</h2>
+            <div class="font-content" id="pv-hint"></div>
+        </div>
+
+        <button type="submit" class="ui button">提交</button>
+
+    </form>
+</div>
+</div>
+
+<% include footer %>

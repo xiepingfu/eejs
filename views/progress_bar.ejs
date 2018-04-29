@@ -24,36 +24,38 @@
 <script>
 var start_time = new Date('<%=contest.start_time%>').getTime();
 var end_time = new Date('<%=contest.end_time%>').getTime();
-var cur_time = Date.now();
+var cur_time = <%=cur_time%>;
+if(cur_time>end_time) cur_time=end_time;
 $(function () {
   $('#timer-progress').progress({
-    value: (Date.now()-start_time),
+    value: (cur_time-start_time),
     total: end_time - start_time
 });
 var lave_time = "";
-var lave_d = ((end_time-Date.now())/(1000*60*60*24)).toFixed(0);
+var lave_d = ((end_time-cur_time)/(1000*60*60*24)).toFixed(0);
 if(lave_d>0) lave_time=lave_time+lave_d+"天";
-var lave_h= (((end_time-Date.now())%(1000*60*60*24))/(1000*60*60)).toFixed(0);
+var lave_h= (((end_time-cur_time-1000*60*60)%(1000*60*60*24))/(1000*60*60)).toFixed(0);
 if(lave_h>0) lave_time=lave_time+lave_h+"小时";
-var lave_m= (((end_time-Date.now()+30000)%(1000*60*60))/(1000*60)).toFixed(0);
+var lave_m= (((end_time-cur_time-30000)%(1000*60*60))/(1000*60)).toFixed(0);
 if(lave_m>0) lave_time=lave_time+lave_m+"分钟";
-var lave_s= (((end_time-Date.now())%(1000*60))/(1000)).toFixed(0);
+var lave_s= (((end_time-cur_time)%(1000*60))/(1000)).toFixed(0);
 if(lave_s>=0)lave_time=lave_time+lave_s+"秒";
 if(lave_s<=0 && lave_time=="") lave_time="0秒";
 document.getElementById("lave_time").innerText = lave_time;
   setInterval(function () {
       $('#timer-progress').progress({
-        value: (Date.now()-start_time),
+        value: (cur_time-start_time),
         total: end_time - start_time
     });
+    cur_time=cur_time+1000;
     var lave_time = "";
-    var lave_d = ((end_time-Date.now())/(1000*60*60*24)).toFixed(0);
+    var lave_d = ((end_time-cur_time)/(1000*60*60*24)).toFixed(0);
     if(lave_d>0) lave_time=lave_time+lave_d+"天";
-    var lave_h= (((end_time-Date.now())%(1000*60*60*24))/(1000*60*60)).toFixed(0);
+    var lave_h= (((end_time-cur_time-1000*60*60)%(1000*60*60*24))/(1000*60*60)).toFixed(0);
     if(lave_h>0) lave_time=lave_time+lave_h+"小时";
-    var lave_m= (((end_time-Date.now()+30000)%(1000*60*60))/(1000*60)).toFixed(0);
+    var lave_m= (((end_time-cur_time-30000)%(1000*60*60))/(1000*60)).toFixed(0);
     if(lave_m>0) lave_time=lave_time+lave_m+"分钟";
-    var lave_s= (((end_time-Date.now())%(1000*60))/(1000)).toFixed(0);
+    var lave_s= (((end_time-cur_time)%(1000*60))/(1000)).toFixed(0);
     if(lave_s>0)lave_time=lave_time+lave_s+"秒";
     if(lave_s<=0 && lave_time=="") lave_time="0秒";
     document.getElementById("lave_time").innerText = lave_time;

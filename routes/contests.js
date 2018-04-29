@@ -42,6 +42,7 @@ router.get('/:id', async function (req, res, next) {
         indexContext.start_time = start_time;
         indexContext.end_time = end_time;
         indexContext.cur_time = cur_time;
+        console.log(indexContext.cur_time);
         indexContext.contest = contests[0];
         indexContext.problems = problems;
         indexContext.menuActive = 'contest';

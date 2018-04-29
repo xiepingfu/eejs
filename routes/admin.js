@@ -132,9 +132,9 @@ router.get('/problem/edit', async function (req, res, next) {
             //add
             indexContext.mode = 'add';
             indexContext.problem = {
-                time_limit:"1",
-                memory_limit:"256",
-                defunct:"N"
+                time_limit: "1",
+                memory_limit: "256",
+                defunct: "N"
             };
         }
         res.render('admin_problemEdit', indexContext);
@@ -164,9 +164,81 @@ router.get('/contest', async function (req, res, next) {
         var page = req.query.page;
         if (!page) page = 1;
         indexContext.page = page;
-        indexContext.pages = (contests.length+9) / 10;
+        indexContext.pages = (contests.length + 9) / 10;
         indexContext.contests = contests.slice(0 + 10 * (page - 1), page * 10);
         res.render('admin_contestList', indexContext);
+    }
+    catch (e) {
+        console.log(e);
+    }
+});
+
+
+router.get('/contest/edit', async function (req, res, next) {
+    var indexContext = {};
+    indexContext.title = '管理 - hnistoj';
+    try {
+        indexContext.menuActive = 'admin';
+        indexContext.loginuser = '';
+        indexContext.privilege = 0;
+        if (req.session.loginuser) {
+            indexContext.loginuser = req.session.loginuser;
+            indexContext.privilege = req.session.privilege;
+        }
+        if (indexContext.privilege == 0) {
+            res.redirect('/index');
+        }
+        let cid = req.query.cid;
+        if (cid) {
+            //edit
+            console.log(cid);
+            let Contests = require('../modles/contest');
+            let contest = await Contests.selectWhere(cid);
+            let problems = await Contests.Cproblems([cid, cid, cid]);
+            indexContext.problems = problems;
+            indexContext.contest = contest[0];
+            indexContext.mode = 'edit';
+        } else {
+            //add
+            indexContext.mode = 'add';
+            indexContext.contest = {
+                start_time: new Date().toLocaleString(),
+                end_time: new Date().toLocaleString(),
+                private: 0
+            };
+            indexContext.problems = [];
+        }
+        res.render('admin_contestEdit', indexContext);
+    }
+    catch (e) {
+        console.log(e);
+    }
+});
+
+/*********************************************users */
+router.get('/user', async function (req, res, next) {
+    var indexContext = {};
+    indexContext.title = '管理 - hnistoj';
+    console.log('?');
+    try {
+        indexContext.menuActive = 'admin';
+        indexContext.loginuser = '';
+        indexContext.privilege = 0;
+        if (req.session.loginuser) {
+            indexContext.loginuser = req.session.loginuser;
+            indexContext.privilege = req.session.privilege;
+        }
+        if (indexContext.privilege == 0) {
+            res.redirect('/index');
+        }
+        var User = require('../modles/usersOld');
+        var page = req.query.page;
+        if (!page) page = 1;
+        var UserCount = await User.countAll();
+        indexContext.page = page;
+        indexContext.pages = (UserCount + 49) / 50;
+        indexContext.users = await User.selectLimit([50*(page-1),50]);
+        res.render('admin_userList', indexContext);
     }
     catch (e) {
         console.log(e);

@@ -1,0 +1,237 @@
+<% include header %>
+
+<div class="ui main container">
+<div class="padding">
+    <div class="ui grid" style="margin-bottom: 10px; ">
+        <div class="row" style="white-space: nowrap; ">
+            <div class="seven wide column">
+                <form action="/problems/search" method="get">
+                    <div class="ui search" style="width: 280px; height: 28px; margin-top: -5.3px; ">
+                        <div class="ui left icon input" style="width: 100%; ">
+                            <input class="prompt" style="width: 100%; " type="text" placeholder="用户名 / 昵称 / IP …" name="keyword">
+                            <i class="search icon"></i>
+                        </div>
+                        <div class="results" style="width: 100%; "></div>
+                    </div>
+                </form>
+            </div>
+            <div class="nine wide right aligned column">
+                <div style="margin-left: 10px;margin-right: 10px; display: inline-block; ">
+                    <div style="text-align: center; ">
+                        <div class="ui pagination menu" style="box-shadow: none; ">
+                        <a class=" <%if(parseInt(page)<=1){%>disabled<%}%> icon item" id="page_prev" href="/admin/user?page=<%=parseInt(page)-1%>">
+                        <i class="left chevron icon"></i>
+                    </a>
+                    <%
+                    var ileft=0;
+                    var iright=0;
+                    %>
+                    <%for(var i=1; i<=pages; i++){%>
+                        <%if(pages>=18){%>
+                            <% if(Math.abs(i-page)<=2 || Math.abs(pages-i)<=2 || Math.abs(i)<=2){ %>
+                                <a class="item <%if(i==page){%>active<%}%>" href="/admin/user?page=<%=i%>"><%=i%></a>
+                            <%}else{ %>
+                                <%if(parseInt(i)<page && ileft==0){%>
+                                    <%ileft=1%>
+                                    <a class="item disabled" href="">....</a>
+                                <%}else if(parseInt(i)>page && iright==0){%>
+                                    <%iright=1%>
+                                    <a class="item disabled" href="">....</a>
+                                <%}%>
+                            <%}%>
+                        <%}else{%>
+                                <a class="item <%if(i==page){%>active<%}%>" href="/admin/user?page=<%=i%>"><%=i%></a>
+                        <%}%>
+                    <%}%>
+                    <a class="<%if(parseInt(page)>=parseInt(pages)){%>disabled<%}%> icon item" href="/admin/user?page=<%=parseInt(page)+1%>" id="page_next">
+                        <i class="right chevron icon"></i>
+                    </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<table class="ui very white center aligned table selectable">
+    <thead>
+        <tr>
+        <th class="one wide">排名</th>
+            <th class="one wide">
+                <a href="/problems?sort=id&order=desc">用户名
+                    <i class="angle up icon"></i>
+                </a>
+            </th>
+            <th class="two wide">
+                <a href="/problems?sort=title&order=asc">昵称</a>
+            </th>
+            <th class="two wide">
+                <a href="/problems?sort=ac_num&order=desc">注册时间</a>
+            </th>
+            <th class="one wide">
+                <a href="/problems?sort=ac_num&order=desc">最后登录IP</a>
+            </th>
+            <th class="two wide">权限 </th>
+            <th class="one wide">禁用 </th>
+            <th class="one wide">删除 </th>
+            <th class="one wide">修改密码 </th>
+        </tr>
+    </thead>
+    <script>
+        function public_user(uid)
+        {
+            $.ajax({
+                url: "/api/user/public",
+                type: 'POST',
+                data: {
+                    "user_id": uid,
+                    "checked": $("#public"+uid).is(":checked"),
+                    "_csrf": document.head.getAttribute('data-csrf-token')
+                },
+                async: true,
+                success: function (data) {
+                    error_code = data.error_code;
+                    switch (error_code) {
+                        case 0:
+                            //delete_success(data.session_id);
+                            return;
+                        default:
+                            alert("未知错误");
+                            break;
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(XMLHttpRequest.responseText);
+                    show_error("未知错误");
+                }
+            });
+        }
+        function delete_user(uid)
+        {
+            var r = confirm("此操作不可逆，不建议此操作，是否继续？");
+            if(r==false) return;
+            var r = confirm("是否删除"+uid+"?");
+            if(r==false) return;
+            $.ajax({
+                url: "/api/user/delete",
+                type: 'POST',
+                data: {
+                    "user_id": uid,
+                    "_csrf": document.head.getAttribute('data-csrf-token')
+                },
+                async: true,
+                success: function (data) {
+                    error_code = data.error_code;
+                    switch (error_code) {
+                        case 0:
+                            alert('success!');
+                            return;
+                        default:
+                            alert("未知错误");
+                            break;
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(XMLHttpRequest.responseText);
+                }
+            });
+        }
+        function chpwd_user(uid)
+        {
+            
+            var r = confirm("此操作不可逆，不建议此操作，是否继续？");
+            if(r==false) return;
+            var r = confirm("重置"+uid+"的密码?");
+            if(r==false) return;
+            $.ajax({
+                url: "/api/user/chpwd",
+                type: 'POST',
+                data: {
+                    "user_id": uid,
+                    "_csrf": document.head.getAttribute('data-csrf-token')
+                },
+                async: true,
+                success: function (data) {
+                    error_code = data.error_code;
+                    switch (error_code) {
+                        case 0:
+                            alert('密码已重置为：hnistoj');
+                            return;
+                        default:
+                            alert("未知错误");
+                            break;
+                    }
+                },
+                error: function (XMLHttpRequest, textStatus, errorThrown) {
+                    alert(XMLHttpRequest.responseText);
+                }
+            });
+        }
+    </script>
+    <tbody>
+    <%users.forEach(function(item,index){%>
+        <tr style="height: 44px; ">
+            <td><%=index+(page-1)*50%></td>
+            <td><a href="/user/<%=item.user_id%>">
+            <%=item.user_id%></a>
+            </td>
+            <td><%=item.nick%></td>
+            <td>
+            <%=item.reg_time%>
+            </td>
+            <td>
+            <%=item.ip%></td>
+            <td>
+                普通用户
+                <a href=""></a>
+            </td>
+            <td>
+                    <div class="ui toggle checkbox" onclick="javascript:public_user('<%=item.user_id%>')">
+                        <input type="checkbox" id="public<%=item.user_id%>" name="public" <%if(item.defunct=='Y'){%>checked<%}%> >
+                        <label></label>
+                    </div>
+            </td>
+            <td>
+                <a href="javascript:delete_user('<%=item.user_id%>');" style="color: red;">删除 </a>
+            </td>
+            <td>
+                <a href="javascript:chpwd_user('<%=item.user_id%>');">重置密码 </a>
+            </td>
+        </tr>
+        <%});%>
+    </tbody>
+</table>
+<br>
+<div style="text-align: center; ">
+    <div class="ui pagination menu" style="box-shadow: none; ">
+    <a class=" <%if(parseInt(page)<=1){%>disabled<%}%> icon item" id="page_prev" href="/admin/user?page=<%=parseInt(page)-1%>">
+    <i class="left chevron icon"></i>
+</a>
+<%
+var ileft=0;
+var iright=0;
+%>
+<%for(var i=1; i<=pages; i++){%>
+    <%if(pages>=18){%>
+        <% if(Math.abs(i-page)<=4 || Math.abs(pages-i)<=4 || Math.abs(i)<=4){ %>
+            <a class="item <%if(i==page){%>active<%}%>" href="/admin/user?page=<%=i%>"><%=i%></a>
+        <%}else{ %>
+            <%if(parseInt(i)<page && ileft==0){%>
+                <%ileft=1%>
+                <a class="item disabled" href="">....</a>
+            <%}else if(parseInt(i)>page && iright==0){%>
+                <%iright=1%>
+                <a class="item disabled" href="">....</a>
+            <%}%>
+        <%}%>
+    <%}else{%>
+            <a class="item <%if(i==page){%>active<%}%>" href="/admin/user?page=<%=i%>"><%=i%></a>
+    <%}%>
+<%}%>
+<a class="<%if(parseInt(page)>=parseInt(pages)){%>disabled<%}%> icon item" href="/admin/user?page=<%=parseInt(page)+1%>" id="page_next">
+    <i class="right chevron icon"></i>
+</a>
+    </div>
+</div>
+
+<% include footer %>

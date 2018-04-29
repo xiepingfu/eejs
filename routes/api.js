@@ -114,6 +114,61 @@ router.post('/contest/public', async (req, res) => {
     }
 });
 
+router.post('/user/public', async (req, res) => {
+    try {
+        res.setHeader('Content-Type', 'application/json');
+        let User = require('../modles/usersOld');
+        let isPublic = 'Y';
+        if (req.body.checked == 'true') {
+            isPublic = 'N';
+        }
+        console.log(isPublic);
+        let resualt = await User.changePublic([isPublic, req.body.user_id]);
+        res.send({ error_code: 0 });
+    } catch (e) {
+        console.log(e);
+        res.send({ error_code: e });
+    }
+});
+
+router.post('/user/delete', async (req, res) => {
+    try {
+        res.setHeader('Content-Type', 'application/json');
+        let User = require('../modles/usersOld');
+        let resualt = await User.deleteWhere([req.body.user_id]);
+        res.send({ error_code: 0 });
+    } catch (e) {
+        console.log(e);
+        res.send({ error_code: e });
+    }
+});
+
+router.post('/user/chpwd', async (req, res) => {
+    try {
+        //alert(md5('hnistoj')); dd9dfe76e5c758f8f4918db972468156
+        var defpwd="dd9dfe76e5c758f8f4918db972468156";//hnistoj
+        res.setHeader('Content-Type', 'application/json');
+        let User = require('../modles/usersOld');
+        let resualt = await User.changePassword([defpwd, req.body.user_id]);
+        res.send({ error_code: 0 });
+    } catch (e) {
+        console.log(e);
+        res.send({ error_code: e });
+    }
+});
+
+router.post('/contest/delete', async (req, res) => {
+    try {
+        res.setHeader('Content-Type', 'application/json');
+        let Contests = require('../modles/contest');
+        let resualt = await Contests.deleteWhere([req.body.contest_id]);
+        res.send({ error_code: 0 });
+    } catch (e) {
+        console.log(e);
+        res.send({ error_code: e });
+    }
+});
+
 router.post('/problem/delete', async (req, res) => {
     try {
         res.setHeader('Content-Type', 'application/json');
@@ -139,6 +194,47 @@ router.post('/problem/add', async (req, res) => {
     } catch (e) {
         console.log(e);
         res.send({ error_code: e });
+    }
+});
+
+router.post('/contest/edit', async (req, res) => {
+    try {
+        res.setHeader('Content-Type', 'application/json');
+        let Contests= require('../modles/contest');
+        let start_time = new Date(req.body.start_time).toLocaleString();
+        let end_time = new Date(req.body.end_time).toLocaleString();
+        let resualt = Contests.updateWhere([req.body.title,req.body.description,start_time,end_time,req.body.isPublic,req.body.language,req.body.password,req.body.contest_id]);
+        res.send({ error_code: 0});
+    } catch (e) {
+        console.log(e);
+        res.send({ error_code: e});
+    }
+});
+
+router.post('/contest/add', async (req, res) => {
+    try {
+        res.setHeader('Content-Type', 'application/json');
+        let Contests= require('../modles/contest');
+        let start_time = new Date(req.body.start_time).toLocaleString();
+        let end_time = new Date(req.body.end_time).toLocaleString();
+        console.log('add');
+        let resualt = await Contests.insertNew([req.body.title,req.body.description,start_time,end_time,req.body.isPublic,req.body.language,req.body.password]);
+        let cid = await Contests.getMaxCID();
+        let contest_problems = [];
+        var temps = req.body.Cproblems;
+        var patt = /[0-9]+/g;
+        while((tmp = patt.exec(temps)) != null){
+            contest_problems.push(tmp)
+        }
+        resualt = await Contests.deleteCproblems(cid);
+        contest_problems.forEach(function(item,index){
+            console.log(item[0]);
+            resualt = Contests.insertCproblems([cid,item[0],index]);
+        });
+        res.send({ error_code: contest_problems});
+    } catch (e) {
+        console.log(e);
+        res.send({ error_code: e});
     }
 });
 

@@ -64,7 +64,50 @@ async function changePublic(options) {
     return dataList;
 }
 
+async function deleteWhere(options) {
+    let sql = 'DELETE FROM contest WHERE contest_id=?';
+    let dataList = await mysql.query(sql,options);
+    return dataList;
+}
+
+async function updateWhere(options) {
+    let sql = "UPDATE `contest` set `title`=?,description=?,`start_time`=?,`end_time`=?,`private`=?,`langmask`=? ,password=? WHERE `contest_id`=?";
+    let dataList = await mysql.query(sql,options);
+    return dataList;
+}
+
+async function insertNew(options) {
+    let sql = "insert INTO `contest`(`title`,`description`,`start_time`,`end_time`,`private`,`langmask`,`password`) VALUES(?,?,?,?,?,?,?)";
+    let dataList = await mysql.query(sql,options);
+    return dataList;
+}
+
+async function insertCproblems(options) {
+    let sql = "INSERT INTO `contest_problem`(`contest_id`,`problem_id`,`num`) VALUES (?,?,?)";
+    let dataList = await mysql.query(sql,options);
+    return dataList;
+}
+
+
+async function deleteCproblems(options) {
+    let sql = "DELETE FROM contest_problem WHERE contest_id=?";
+    let dataList = await mysql.query(sql,options[0]);
+    return dataList;
+}
+
+async function getMaxCID() {
+    let sql = "SELECT MAX(contest_id) AS cid FROM contest";
+    let dataList = await mysql.query(sql);
+    return dataList[0].cid;
+}
+
 exports.selectAllData = selectAllData;
 exports.selectWhere = selectWhere;
 exports.Cproblems = Cproblems;
 exports.changePublic = changePublic;
+exports.deleteWhere = deleteWhere;
+exports.updateWhere = updateWhere;
+exports.insertNew = insertNew;
+exports.getMaxCID = getMaxCID;
+exports.insertCproblems = insertCproblems;
+exports.deleteCproblems = deleteCproblems;
