@@ -1,0 +1,62 @@
+<% include header %>
+<div class="ui main container">
+
+<style>
+.submit_time {
+  font-size: 0.8em;
+  margin-top: 5px;
+  color: #000;
+}
+</style>
+<div class="padding">
+        <table class="ui very white center aligned table selectable">
+            <thead>
+            <tr>
+                <th>#</th>
+                <th>用户名</th>
+                <th>昵称</th>
+                <th>题数</th>
+                <th>耗时</th>
+                <%problems.forEach(function(item,index){%>
+                <th>
+                  <a href="/contest/31/problem/1">
+                    <%=index%>
+                  </a>
+                </th>
+                <%});%>
+            </tr>
+            </thead>
+            <tbody>
+            <%rankArray.forEach(function(item,index){%>
+            <tr>
+                <td class="one wide">
+                    <div class="ui yellow ribbon label">
+                  <%=index%>
+                  </div>
+                </td>
+                <td class="one wide"><a><%=item.user_id%></a></td>
+                    <td class="one wide"><%=item.nick%>
+                    </td>
+                    <td class="one wide"><%=item.solved%>
+                    </td>
+                  <td class="one wide">
+                  <%=(Math.floor(item.total_time/(1000*60*60))).toFixed(0)+":"+(Math.floor((item.total_time%(1000*60*60))/(1000*60))).toFixed(0)+":"+(Math.floor(item.total_time%(1000*60)/(1000))).toFixed(0)%>
+                  </td>
+                  <%for(var i=0;i<7; i++){%>
+                  <td style="background: <%if(item.fraction[i]){%>rgb(138,217,151)<%}else if(item.times[i]){%>rgb(213,59,72)<%}%>;">
+                  <span class="score score_7">
+                  <%if(item.times[i]){%>(-<%=item.times[i]%>)<%}%>
+                </span>
+                <div class="submit_time">
+                <%if(item.cost_time[i]){%><%=(Math.floor(item.cost_time[i]/(1000*60*60))).toFixed(0)+":"+(Math.floor((item.cost_time[i]%(1000*60*60))/(1000*60))).toFixed(0)+":"+(Math.floor(item.cost_time[i]%(1000*60)/(1000))).toFixed(0)%><%}%>
+                </div>
+                  
+                  </td>
+                  <%};%>
+            </tr>
+            <%});%>
+            </tbody>
+        </table>
+</div>
+</div>
+<% include footer %>

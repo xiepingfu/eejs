@@ -13,7 +13,7 @@
 </head>
 
 <body style="background:url('/images/bg2.png');">
-    <div class="ui fixed green pointing menu" style="position: fixed; height: 48px;">
+    <div class="ui fixed green pointing menu" style="position: fixed; height: 48px;z-index:99999;">
         <div class="ui container">
             <span class="item">HNISTOJ</span>
             <a class="item <% if (menuActive == 'index') { %> active<% } %>" id="index" href="/index">
@@ -30,16 +30,17 @@
                 <i class="comments icon"></i> 讨论</a>
             <a class="item <% if (menuActive == 'help') { %> active<% } %>" id="help" href="/help">
                 <i class="help circle icon"></i> 帮助</a>
-            <%if(privilege==255){%>
+            <%if(privilege|0){%>
                 <div class="ui pointing dropdown link item">
                     <i class="cogs icon"></i>
                     <span class="text">管理</span>
                     <i class="dropdown icon"></i>
                     <div class="menu">
-                        <a class="item"  href="/admin/notice">公告管理</a>
-                        <a class="item" href="/admin/problem">问题管理</a>
-                        <a class="item" href="/admin/contest">竞赛管理</a>
-                        <a class="item" href="/admin/user">用户管理</a>
+                        <%if(privilege&4){%><a class="item"  href="/admin/notice">公告管理</a><%}%>
+                        <%if(privilege&1){%><a class="item" href="/admin/problem">问题管理</a><%}%>
+                        <%if(privilege&2){%><a class="item" href="/admin/contest">竞赛管理</a><%}%>
+                        <%if(privilege&16){%><a class="item" href="/admin/user">用户管理</a><%}%>
+                        <%if(privilege&8){%><a class="item" href="">权限管理</a><%}%>
                     </div>
                 </div>
             <%}%>

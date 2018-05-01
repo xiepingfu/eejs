@@ -70,6 +70,18 @@ async function deleteWhere(options) {
     return dataList;
 }
 
+/** 重构 */
+
+async function login(options) {
+    let sql = "SELECT password,privilege,defunct FROM users WHERE user_id=?";
+    let dataList = await mysql.query(sql,options);
+    return dataList[0];
+}
+exports.login=login;
+
+
+
+
 exports.selectAllData=selectAllData;
 exports.updateWhere=updateWhere;
 exports.findOne=findOne;

@@ -71,6 +71,9 @@ function login() {
                 case 1003:
                     show_error("您尚未设置密码，请通过下方「找回密码」来设置您的密码。");
                     break;
+                case 2:
+                    show_error("该账号已被限制登录，如有疑问请联系管理员。");
+                    break;
                 case 1:
                     success(data.session_id);
                     return;

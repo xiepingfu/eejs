@@ -1,0 +1,84 @@
+<% include header %>
+<div class="ui main container">
+<div class="padding">
+<table id="vueAppFuckSafari" class="ui very white center aligned table selectable" style="white-space: nowrap; " id="table">
+<thead>
+  <tr>
+    <th>编号</th>
+    <th>题目</th>
+    <th>状态</th>
+    <th>分数</th>
+    <th>总时间</th>
+    <th>内存</th>
+    <th>代码 / 答案文件</th>
+    <th>提交者</th>
+    <th>提交时间</th>
+  </tr>
+</thead>
+<tbody>
+<%submissions.forEach(function(item){%>
+  <tr>
+  <td>#<%=item.solution_id%></td>
+  <td><a href="/problems/<%=item.problem_id%>">#<%=item.problem_id%>.</a></td>
+  <td>
+  <%if(item.result==0){%>
+  <i class="hourglass half teal icon"></i> Waiting
+  <%}else if(item.result==1){%>
+  <i class="spinner violet icon"></i> Running
+  <%}else if(item.result==2){%>
+  <i class="spinner brown icon"></i> Compiling
+  <%}else if(item.result==4){%>
+  <i class="checkmark green icon"></i> Accepted
+  <%}else if(item.result==5){%>
+  <i class="ban pink icon"></i> Pattern Error
+  <%}else if(item.result==6){%>
+  <i class="remove red icon"></i>Wrong Answer
+  <%}else if(item.result==7){%>
+  <i class="clock yellow icon"></i> Time Limit Exceeded
+  <%}else if(item.result==8){%>
+  <i class="microchip orange icon"></i> Memory Limit Exceeded
+  <%}else if(item.result==9){%>
+  <i class="print olive icon"></i> Output Limit Exceeded
+  <%}else if(item.result==10){%>
+  <i class="bomb purple icon"></i> Runtime Error
+  <%}else if(item.result==11){%>
+  <i class="code grey icon"></i> Compile Error
+  <%}else if(item.result==13){%>
+  <i class="server black icon"></i> System Error
+  <%}else{%>
+  <i class="hourglass half teal icon"></i> Waiting
+  <%}%>
+  </td>
+  <td><%=(parseInt(item.pass_rate*100)).toFixed(0)%></td>
+  <td><%=item.time%>MS</td>
+  <td><%=item.memory%>KB</td>
+  <td>
+  <%if(loginuser==item.user_id || privilege==255){%><a href=""><%}%>
+  <%if(item.language==1){%>
+  C++
+  <%}else if(item.language==2){%>
+  Pascal
+  <%}else if(item.language==3){%>
+  Java
+  <%}else if(item.language==0){%>
+  C
+  <%}%>
+  <%if(loginuser==item.user_id || privilege==255){%></a><%}%>
+  /<%=item.code_length%>B</td>
+  <td class="one wide"><a href="/user/<%=item.user_id%>"><%=item.user_id%></a></td>
+  <td class="one wide"><%=item.in_date%></td>
+  </tr>
+  <%});%>
+</tbody>
+</table>
+<div class="ui form two fields" style="margin-top: 15px; ">
+<div class="field">
+    <label for="description">源代码</label>
+    <textarea class="font-content" rows="50" id="description" name="description"><%=source%></textarea>
+</div>
+
+</div>
+</div>
+</div>
+
+<% include footer %>

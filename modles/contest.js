@@ -101,6 +101,32 @@ async function getMaxCID() {
     return dataList[0].cid;
 }
 
+async function Count() {
+    let sql = "SELECT COUNT(*) AS count FROM contest WHERE defunct='N' ";
+    let dataList = await mysql.query(sql);
+    return dataList[0].count;
+}
+
+async function Contests(options) {
+    var ti = new Date().toLocaleString();
+    let sql = "SELECT * FROM contest WHERE defunct='N' ORDER BY end_time DESC LIMIT ?,15";
+    let contests = await mysql.query(sql,options);
+    if (contests) {
+        for (var i = 0; i < contests.length; i++) {
+            if (contests[i].end_time <= ti) {
+                contests[i].statu = 1;//end
+            }
+            else if (contests[i].start_tme <= ti) {
+                contests[i].statu = 2;//running
+            }
+            else {
+                contests[i].statu = 3;//no start
+            }
+        }
+    }
+    return contests;
+}
+
 exports.selectAllData = selectAllData;
 exports.selectWhere = selectWhere;
 exports.Cproblems = Cproblems;
@@ -111,3 +137,5 @@ exports.insertNew = insertNew;
 exports.getMaxCID = getMaxCID;
 exports.insertCproblems = insertCproblems;
 exports.deleteCproblems = deleteCproblems;
+exports.Count = Count;
+exports.Contests = Contests;

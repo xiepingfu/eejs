@@ -4,20 +4,23 @@ var User = require('../modles/users');
 var UsersOld = require('../modles/usersOld');
 
 router.post('/login', async (req, res) => {
-    var ec = 1001;
+    var error_code = 1001;
     try {
-        let user = await User.findOne(req.body.username);
+        let Users = require('../modles/usersOld');
+        let user = await UsersOld.login(req.body.username);
         if (user) {
-            ec = 1002;
-            console.log(user);
+            error_code = 1002;
+            if (user.defunct == 'Y') {
+                throw 2;
+            }
             if (user.password == req.body.password) {
-                ec = 1;
-                req.session.loginuser = user.user_id;
+                error_code = 1;
+                req.session.loginuser = req.body.username;
                 req.session.privilege = user.privilege;
             }
         }
         res.setHeader('Content-Type', 'application/json');
-        res.send({ error_code: ec });
+        res.send({ error_code: error_code });
     } catch (e) {
         console.log(e);
         res.send({ error_code: e });
@@ -28,7 +31,7 @@ router.get('/loginout', async (req, res) => {
     try {
         req.session.destroy();
         res.setHeader('Content-Type', 'application/json');
-        res.send({ error_code: ec });
+        res.send({ error_code: 0 });
     } catch (e) {
         console.log(e);
         res.send({ error_code: e });
@@ -146,7 +149,7 @@ router.post('/user/delete', async (req, res) => {
 router.post('/user/chpwd', async (req, res) => {
     try {
         //alert(md5('hnistoj')); dd9dfe76e5c758f8f4918db972468156
-        var defpwd="dd9dfe76e5c758f8f4918db972468156";//hnistoj
+        var defpwd = "dd9dfe76e5c758f8f4918db972468156";//hnistoj
         res.setHeader('Content-Type', 'application/json');
         let User = require('../modles/usersOld');
         let resualt = await User.changePassword([defpwd, req.body.user_id]);
@@ -200,41 +203,41 @@ router.post('/problem/add', async (req, res) => {
 router.post('/contest/edit', async (req, res) => {
     try {
         res.setHeader('Content-Type', 'application/json');
-        let Contests= require('../modles/contest');
+        let Contests = require('../modles/contest');
         let start_time = new Date(req.body.start_time).toLocaleString();
         let end_time = new Date(req.body.end_time).toLocaleString();
-        let resualt = Contests.updateWhere([req.body.title,req.body.description,start_time,end_time,req.body.isPublic,req.body.language,req.body.password,req.body.contest_id]);
-        res.send({ error_code: 0});
+        let resualt = Contests.updateWhere([req.body.title, req.body.description, start_time, end_time, req.body.isPublic, req.body.language, req.body.password, req.body.contest_id]);
+        res.send({ error_code: 0 });
     } catch (e) {
         console.log(e);
-        res.send({ error_code: e});
+        res.send({ error_code: e });
     }
 });
 
 router.post('/contest/add', async (req, res) => {
     try {
         res.setHeader('Content-Type', 'application/json');
-        let Contests= require('../modles/contest');
+        let Contests = require('../modles/contest');
         let start_time = new Date(req.body.start_time).toLocaleString();
         let end_time = new Date(req.body.end_time).toLocaleString();
         console.log('add');
-        let resualt = await Contests.insertNew([req.body.title,req.body.description,start_time,end_time,req.body.isPublic,req.body.language,req.body.password]);
+        let resualt = await Contests.insertNew([req.body.title, req.body.description, start_time, end_time, req.body.isPublic, req.body.language, req.body.password]);
         let cid = await Contests.getMaxCID();
         let contest_problems = [];
         var temps = req.body.Cproblems;
         var patt = /[0-9]+/g;
-        while((tmp = patt.exec(temps)) != null){
+        while ((tmp = patt.exec(temps)) != null) {
             contest_problems.push(tmp)
         }
         resualt = await Contests.deleteCproblems(cid);
-        contest_problems.forEach(function(item,index){
+        contest_problems.forEach(function (item, index) {
             console.log(item[0]);
-            resualt = Contests.insertCproblems([cid,item[0],index]);
+            resualt = Contests.insertCproblems([cid, item[0], index]);
         });
-        res.send({ error_code: contest_problems});
+        res.send({ error_code: contest_problems });
     } catch (e) {
         console.log(e);
-        res.send({ error_code: e});
+        res.send({ error_code: e });
     }
 });
 
@@ -324,6 +327,12 @@ router.post('/submitCode', async function (req, res, next) {
         options.in_data = new Date().toLocaleString();
         options.code_length = options.code.length;
         options.ip = '0.0.0.0';
+        console.log(req.body.contest_id);
+        if (req.body.contest_id) {
+            options.contest_id = req.body.contest_id;
+            options.pnum=req.body.pnum;
+        }
+        console.log(req.body.pnum);
         let Sub = require('../modles/submissions');
         let resualt = await Sub.insertNew(options);
         console.log(resualt);
@@ -335,10 +344,30 @@ router.post('/submitCode', async function (req, res, next) {
     }
 });
 
+function RANKER() {
+    let ranker = new Object;
+    ranker.user_id="";
+    ranker.solved=0;
+    ranker.total_fraction=0;
+    ranker.total_time=0;
+    ranker.time=new Array;
+    ranker.fraction=new Array;
+    return ranker;
+}
+
+router.get('/contest/ranklist', async function (req, res, next) {
+    console.log('ranklist');
+    try {
+        let Submissions = require('../modles/submissions');
+        let sub = Submissions.contestRanklist(req.body.contest_id);
+    } catch (error) {
+        
+    }
+});
+
+
 router.post('/userEdit', async function (req, res, next) {
     console.log('submit');
-    var indexContext = {};
-    indexContext.title = '个人中心 - hnistoj';
     try {
         let uid = req.body.username;
         let nick = req.body.nick;
@@ -346,15 +375,7 @@ router.post('/userEdit', async function (req, res, next) {
         let password = req.body.password;
         let passwordOld = req.body.passwordOld;
         let user = await User.findOne(uid);
-        console.log(password);
-        indexContext.menuActive = '';
-        indexContext.loginuser = '';
-        indexContext.privilege = 0;
-        if (req.session.loginuser) {
-            indexContext.loginuser = req.session.loginuser;
-            indexContext.privilege = req.session.privilege;
-        }
-        if (indexContext.loginuser == uid) {
+        if (req.session.loginuser == uid) {
             if (passwordOld != 'd41d8cd98f00b204e9800998ecf8427e') {
                 if (passwordOld == user.password) {
                     let resualt = await UsersOld.updateWhere([nick, email, uid]);
@@ -383,14 +404,14 @@ router.post('/userEdit', async function (req, res, next) {
 var multer = require('multer');
 var uploadFolder = './upload/';
 var storage = multer.diskStorage({
-    destination: function(req, file, cb) {
+    destination: function (req, file, cb) {
         cb(null, uploadFolder);
     },
-    filename: function(req,file,cb) {
-        cb(null, Date.now() + '_' +file.originalname);
+    filename: function (req, file, cb) {
+        cb(null, Date.now() + '_' + file.originalname);
     }
 });
-var upload = multer({storage:storage});
+var upload = multer({ storage: storage });
 
 router.post('/upload', upload.single('logo'), function (req, res, next) {
     console.log(req.file);

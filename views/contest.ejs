@@ -17,10 +17,10 @@
           <div class="column">
             <div class="ui buttons">
 
-              <a class="ui small blue button" href="/contest/31/ranklist">排行榜</a>
+              <a class="ui small blue button" href="/contests/<%=contest.contest_id%>/ranklist">排行榜</a>
 
 
-              <a class="ui small positive button" href="/submissions?contest=31">提交记录</a>
+              <a class="ui small positive button" href="/submissions?contest_id=<%=contest.contest_id%>">提交记录</a>
 
             </div>
           </div>
@@ -56,31 +56,28 @@
                 </tr>
               </thead>
               <tbody>
-                <% let pid = 0; %>
-                <%problems.forEach(function(item){%>
+                <%problems.forEach(function(item,index){%>
                   <tr>
                     <td class="center aligned" style="white-space: nowrap; ">
 
                     </td>
-                    <td><%=pid%> </td>
+                    <td><%=index%> </td>
                     <td>
-                      <a href="/contests/<%=contest.contest_id%>/problem/<%=item.pid%>?pnum=<%=pid%>">
+                      <a href="/contests/<%=contest.contest_id%>/problem/<%=item.pid%>?pnum=<%=index%>">
                         <%=item.title%>
                       </a>
                     </td>
                     <td class="center aligned" style="white-space: nowrap; ">
-                      <a href="/contest/31/submissions?problem_id=1&amp;status=Accepted"><%=item.accepted%></a>
+                      <a href="/contest/31/submissions?problem_id=1&amp;status=Accepted"><%if(item.accepted){%><%=item.accepted%><%}else{%>0<%}%></a>
                       /
-                      <a href="/contest/31/submissions?problem_id=1&amp;min_score=1"><%=item.submit%></a>
+                      <a href="/contest/31/submissions?problem_id=1&amp;min_score=1"><%if(item.submit){%><%=item.submit%><%}else{%>0<%}%></a>
                     </td>
                   </tr>
-                  <% pid=pid+1; %>
                   <%});%>
               </tbody>
             </table>
           </div>
         </div>
-
       </div>
     </div>
 

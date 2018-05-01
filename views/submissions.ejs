@@ -3,13 +3,13 @@
 <div class="padding">
   
 
-  <form action="/submissions/query" class="ui mini form" method="get" role="form" id="form">
-    <input type="hidden" name="contest" value="" />
+  <form action="/submissions" class="ui mini form" method="get" role="form" id="form">
+    <input type="hidden" name="contest_id" value="" />
     <div class="inline fields" style="margin-bottom: 25px; white-space: nowrap; ">
       <label style="font-size: 1.2em; margin-right: 1px; ">题目：</label>
-      <div class="field"><input name="problem_id" style="width: 50px; " type="text" value="<%=options.pid%>"></div>
+      <div class="field"><input name="problem_id" style="width: 50px; " type="text" value="<%=query.pid%>"></div>
           <label style="font-size: 1.2em; margin-right: 1px; ">提交者：</label>
-        <div class="field"><input name="user_id" style="width: 100px; " type="text" value="<%=options.uid%>"></div>
+        <div class="field"><input name="user_id" style="width: 100px; " type="text" value="<%=query.uid%>"></div>
             <label style="font-size: 1.2em; margin-right: 1px; ">分数：</label>
         <div class="field" style="padding-right: 6px; "><input name="min_score" style="width: 45px; " type="text" value="0"></div>
         <label style="font-size: 1.2em; margin-right: 7px; ">～</label>
@@ -17,7 +17,7 @@
         <label style="font-size: 1.2em; margin-right: 1px; ">语言：</label>
       <div class="field">
         <div class="ui fluid selection dropdown" id="select_language" style="width: 110px; ">
-          <input type="hidden" name="language" value="<%=options.lan%>">
+          <input type="hidden" name="language" value="<%=query.lan%>">
           <i class="dropdown icon"></i>
           <div class="default text"></div>
           <div class="menu">
@@ -42,24 +42,24 @@
           <label style="font-size: 1.2em; margin-right: 1px; ">状态：</label>
         <div class="field">
           <div class="ui fluid selection dropdown" id="select_status" style="width: 210px; ">
-            <input type="hidden" name="status" value="<%=options.sta%>">
+            <input type="hidden" name="status" value="<%=query.sta%>">
             <i class="dropdown icon"></i>
             <div class="default text"></div>
             <div class="menu">
               <div class="item" data-value="">不限<i class="dropdown icon" style="visibility: hidden; "></i></div>
-                  <div class="item" data-value="4"><span class="status accepted"><i class="checkmark icon"></i> Accepted</div>
-                    <div class="item" data-value="6"><span class="status wrong_answer"><i class="remove icon"></i> Wrong Answer</div>
-                  <div class="item" data-value="10"><span class="status runtime_error"><i class="bomb icon"></i> Runtime Error</div>
-                  <div class="item" data-value="Invalid Interaction"><span class="status invalid_interaction"><i class="ban icon"></i> Invalid Interaction</div>
-                  <div class="item" data-value="7"><span class="status time_limit_exceeded"><i class="clock icon"></i> Time Limit Exceeded</div>
-                  <div class="item" data-value="8"><span class="status memory_limit_exceeded"><i class="microchip icon"></i> Memory Limit Exceeded</div>
-                  <div class="item" data-value="9"><span class="status output_limit_exceeded"><i class="print icon"></i> Output Limit Exceeded</div>
-                  <div class="item" data-value="File Error"><span class="status file_error"><i class="file outline icon"></i> File Error</div>
-                  <div class="item" data-value="0"><span class="status waiting"><i class="hourglass half icon"></i> Waiting</div>
-                  <div class="item" data-value="1"><span class="status running"><i class="spinner icon"></i> Running</div>
-                  <div class="item" data-value="2"><span class="status compiling"><i class="spinner icon"></i> Compiling</div>
-                  <div class="item" data-value="11"><span class="status compile_error"><i class="code icon"></i> Compile Error</div>
-                    <div class="item" data-value="13"><span class="status system_error"><i class="server icon"></i> System Error</div>
+                  <div class="item" data-value="4"><span class="status accepted"><i class="checkmark green icon"></i> Accepted</span></div>
+                    <div class="item" data-value="6"><span class="status wrong_answer"><i class="remove red icon"></i> Wrong Answer</div>
+                  <div class="item" data-value="10"><span class="status runtime_error"><i class="bomb purple icon"></i> Runtime Error</div>
+                  <div class="item" data-value="Invalid Interaction"><span class="status invalid_interaction"><i class="ban pink icon"></i> Pattern Error</div>
+                  <div class="item" data-value="7"><span class="status time_limit_exceeded"><i class="clock yellow icon"></i> Time Limit Exceeded</div>
+                  <div class="item" data-value="8"><span class="status memory_limit_exceeded"><i class="microchip orange icon"></i> Memory Limit Exceeded</div>
+                  <div class="item" data-value="9"><span class="status output_limit_exceeded"><i class="print olive icon"></i> Output Limit Exceeded</div>
+                  <div class="item" data-value="File Error"><span class="status file_error"><i class="file outline blue icon"></i> File Error</div>
+                  <div class="item" data-value="0"><span class="status waiting"><i class="hourglass half teal icon"></i> Waiting</div>
+                  <div class="item" data-value="1"><span class="status running"><i class="spinner violet icon"></i> Running</div>
+                  <div class="item" data-value="2"><span class="status compiling"><i class="spinner brown icon"></i> Compiling</div>
+                  <div class="item" data-value="11"><span class="status compile_error"><i class="code grey icon"></i> Compile Error</div>
+                    <div class="item" data-value="13"><span class="status system_error"><i class="server black icon"></i> System Error</div>
                   <div class="item" data-value="No Testdata"><span class="status no_testdata"><i class="folder open outline icon"></i> No Testdata</div>
                   <div class="item" data-value="Partially Correct"><span class="status partially_correct"><i class="minus icon"></i> Partially Correct</div>
                   <div class="item" data-value="Judgement Failed"><span class="status judgement_failed"><i class="server icon"></i> Judgement Failed</div>
@@ -90,41 +90,42 @@
     <tbody>
     <%submissions.forEach(function(item){%>
       <tr>
-      <td>#<%=item.solution_id%></td>
-      <td><%=item.problem_id%></td>
+      <td><a href="/submissions/<%=item.solution_id%>">#<%=item.solution_id%></a></td>
+      <td><a href="/problems/<%=item.problem_id%>">#<%=item.problem_id%>.</a></td>
       <td>
       <%if(item.result==0){%>
-        Waiting
+      <i class="hourglass half teal icon"></i> Waiting
       <%}else if(item.result==1){%>
-        Running
+      <i class="spinner violet icon"></i> Running
       <%}else if(item.result==2){%>
-        Compile
+      <i class="spinner brown icon"></i> Compiling
       <%}else if(item.result==4){%>
-        AC
+      <i class="checkmark green icon"></i> Accepted
       <%}else if(item.result==5){%>
-        PE
+      <i class="ban pink icon"></i> Pattern Error
       <%}else if(item.result==6){%>
-        WA
+      <i class="remove red icon"></i>Wrong Answer
       <%}else if(item.result==7){%>
-        TLE
+      <i class="clock yellow icon"></i> Time Limit Exceeded
       <%}else if(item.result==8){%>
-        MLE
+      <i class="microchip orange icon"></i> Memory Limit Exceeded
       <%}else if(item.result==9){%>
-        输出超限
+      <i class="print olive icon"></i> Output Limit Exceeded
       <%}else if(item.result==10){%>
-        RE
+      <i class="bomb purple icon"></i> Runtime Error
       <%}else if(item.result==11){%>
-        CE
+      <i class="code grey icon"></i> Compile Error
       <%}else if(item.result==13){%>
-        ERROR
+      <i class="server black icon"></i> System Error
       <%}else{%>
-        running
+      <i class="hourglass half teal icon"></i> Waiting
       <%}%>
       </td>
       <td><%=(parseInt(item.pass_rate*100)).toFixed(0)%></td>
       <td><%=item.time%>MS</td>
       <td><%=item.memory%>KB</td>
       <td>
+      <%if(loginuser==item.user_id || privilege==255){%><a href=""><%}%>
       <%if(item.language==1){%>
       C++
       <%}else if(item.language==2){%>
@@ -134,9 +135,10 @@
       <%}else if(item.language==0){%>
       C
       <%}%>
+      <%if(loginuser==item.user_id || privilege==255){%></a><%}%>
       /<%=item.code_length%>B</td>
-      <td><%=item.user_id%></td>
-      <td><%=item.in_date%></td>
+      <td class="one wide"><a href="/user/<%=item.user_id%>"><%=item.user_id%></a></td>
+      <td class="one wide"><%=item.in_date%></td>
       </tr>
       <%});%>
     </tbody>
@@ -145,29 +147,31 @@
   
 <div style="text-align: center; ">
   <div class="ui pagination menu" style="box-shadow: none; ">
-    <a class=" <%if(parseInt(pages)==1){%>disabled<%}%> icon item" id="page_prev">
+    <a class=" <%if(parseInt(query.pages)==1){%>disabled<%}%> icon item" id="page_prev" href="/submissions?contest_id=<%query.cid%>&problem_id=<%=query.pid%>&user_id=<%=query.uid%>&language=<%query.lan%>&status=<%=query.sta%>&page=<%=query.page-1%>">
       <i class="left chevron icon"></i>
     </a>
     <%
     var ileft=0;
     var iright=0;
     %>
-    <%for(var i=1; i<=pages; i++){%>
-      <%if(pages>=18){%>
-        <% if(Math.abs(i-page)<=4 || Math.abs(pages-i)<=4 || Math.abs(i)<=4){ %>
-          <a class="<%if(parseInt(page)==i){%>active<%}%> item" href="/submissions?page=<%=i%>"><%=i%></a>
+    <%for(var i=1; i<=query.pages; i++){%>
+      <%if(query.pages>=18){%>
+        <% if(Math.abs(i-query.page)<=4 || Math.abs(query.pages-i)<=4 || Math.abs(i)<=4){ %>
+          <a class="<%if(parseInt(query.page)==i){%>active<%}%> item" href="/submissions?contest_id=<%=query.cid%>&problem_id=<%=query.pid%>&user_id=<%=query.uid%>&language=<%query.lan%>&status=<%=query.sta%>&page=<%=i%>"><%=i%></a>
         <%}else{ %>
-          <%if(parseInt(i)<page && ileft==0){%>
+          <%if(parseInt(i)<query.page && ileft==0){%>
             <%ileft=1%>
             <a class="item disabled" href="">....</a>
-          <%}else if(parseInt(i)>page && iright==0){%>
+          <%}else if(parseInt(i)>query.page && iright==0){%>
             <%iright=1%>
             <a class="item disabled" href="">....</a>
           <%}%>
       <%}%>
+      <%}else{%>
+      <a class="<%if(parseInt(query.page)==i){%>active<%}%> item" href="/submissions?contest_id=<%=query.cid%>&problem_id=<%=query.pid%>&user_id=<%=query.uid%>&language=<%query.lan%>&status=<%=query.sta%>&page=<%=i%>"><%=i%></a>
       <%}%>
     <%}%>
-    <a class="<%if(parseInt(pages)==page){%>disabled<%}%> icon item" href="/submissions?page=<%=parseInt(page)+1%>" id="page_next">
+    <a class="<%if(parseInt(query.pages)==query.page){%>disabled<%}%> icon item" href="/submissions?contest_id=<%=query.cid%>&problem_id=<%=query.pid%>&user_id=<%=query.uid%>&language=<%query.lan%>&status=<%=query.sta%>&page=<%=parseInt(query.page)+1%>" id="page_next">
       <i class="right chevron icon"></i>
     </a>
   </div>
