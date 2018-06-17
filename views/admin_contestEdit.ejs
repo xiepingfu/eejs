@@ -26,6 +26,7 @@
                             }
                             var start_time = new Date($('#start_date').val() +" "+ $('#start_time').val());
                             var end_time = new Date($('#end_date').val() +" "+ $('#end_time').val());
+                            alert(start_time);
                             if(start_time > end_time)
                             {
                                 alert("开始时间晚于结束时间！");
@@ -123,11 +124,31 @@
                         $(document).ready(function () {
                             $('#start_time_ui').calendar({ 
                                 type: 'time',
+                                formatter: {
+                                    time: function(time, settings) {
+                                        if(!time) return '';
+                                        var hh = time.getHours();
+                                        var mm = time.getMinutes();
+                                        hh = hh < 10?'0'+hh:hh;
+                                        mm = mm<10?'0'+mm:mm;
+                                        return hh+':'+mm;
+                                    }
+                                }
                             });
                         });
                         $(document).ready(function () {
                             $('#end_time_ui').calendar({ 
                                 type: 'time',
+                                formatter: {
+                                    time: function(time, settings) {
+                                        if(!time) return '';
+                                        var hh = time.getHours();
+                                        var mm = time.getMinutes();
+                                        hh = hh < 10?'0'+hh:hh;
+                                        mm = mm<10?'0'+mm:mm;
+                                        return hh+':'+mm;
+                                    }
+                                }
                             });
                         });
                     </script>  

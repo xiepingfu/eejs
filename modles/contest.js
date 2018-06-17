@@ -78,6 +78,7 @@ async function updateWhere(options) {
 
 async function insertNew(options) {
     let sql = "insert INTO `contest`(`title`,`description`,`start_time`,`end_time`,`private`,`langmask`,`password`) VALUES(?,?,?,?,?,?,?)";
+    console.log(options);
     let dataList = await mysql.query(sql,options);
     return dataList;
 }

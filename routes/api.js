@@ -220,7 +220,7 @@ router.post('/contest/add', async (req, res) => {
         let Contests = require('../modles/contest');
         let start_time = new Date(req.body.start_time).toLocaleString();
         let end_time = new Date(req.body.end_time).toLocaleString();
-        console.log('add');
+        console.log('add:'+req.body.start_time+" "+req.body.end_time);
         let resualt = await Contests.insertNew([req.body.title, req.body.description, start_time, end_time, req.body.isPublic, req.body.language, req.body.password]);
         let cid = await Contests.getMaxCID();
         let contest_problems = [];
